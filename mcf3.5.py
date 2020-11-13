@@ -1289,7 +1289,7 @@ class Lever(pygame.sprite.Sprite):
         #------------------------------------------------------------
         else:
             # Only once time at the exit after 100 milliseconds
-            if self.switch=="down":
+            if self.switch=="down": 
                     
                 # Test used to fill the tank above
                 if self.pos=="NO": # 왼쪽 위
