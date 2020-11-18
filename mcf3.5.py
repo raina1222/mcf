@@ -654,7 +654,9 @@ class Information(pygame.sprite.Sprite):
         elif fontIndex == 1:
             self.font=pygame.font.Font("./font/Digirtu_.ttf",18)
         elif fontIndex == 2:
-            self.font=pygame.font.Font("./font/DejaVuSansCondensed-Bold.ttf",16)   
+            self.font=pygame.font.Font("./font/DejaVuSansCondensed-Bold.ttf",16)
+        elif fontIndex == 3:
+            self.font=pygame.font.Font("./font/DejaVuSansCondensed-Bold.ttf",45)   
         self.font.set_bold(True) # bold
         self.image=self.font.render(text1,1,color) # 화면에 출력
         self.rect=self.image.get_rect()
@@ -1389,10 +1391,9 @@ class Cement(pygame.sprite.Sprite):
     def update(self):
     
         self.clock.tick()
-        # 
+
         if self.laps<game.speed: # game speed만큼 시간을 보낸다
             self.laps+=self.clock.get_time()
-        # 
         else:
             self.laps=0 # 시간 초기화
             self.kill()
@@ -1460,7 +1461,8 @@ class Score:
         self.laps=0 # 경과 시간
         self.clock=pygame.time.Clock()
         self.increment=0 # 추가할 점수
-        self.fix = 0 # change
+        self.fix1 = 0 # change
+        self.fix2 = 0 # change
         
     def update(self):
     # laver에서 설정한 increment에 따라서 점수를 증가시킨다
@@ -1473,7 +1475,8 @@ class Score:
                 self.point+=1*self.inc # 1점 증가
                 self.compute() # 위치를 계산해 화면으로 출력
                 self.increment=0 # increment를 0으로 변경
-                self.fix = 1 # change
+                self.fix1 = 1 # change
+                self.fix2 = 1 # change
                 
             elif self.increment==2: # 1층에서 화물차로 시멘트를 내려보낸 경우.1
                 # Addint point immediat
@@ -1481,7 +1484,8 @@ class Score:
                 self.compute() # 위치를 계산해 화면으로 출력
                 self.laps=0 # 시간 초기화
                 self.increment=3 # increment를 3으로 변경
-                self.fix = 1 # change
+                self.fix1 = 1 # change
+                self.fix2 = 1 # change
 
             elif self.increment==3: # 1층에서 화물차로 시멘트를 내려보낸 경우.2
                 # Wait 200 msecond before adding the next point
@@ -1490,16 +1494,20 @@ class Score:
                      self.point+=1*self.inc # 1점 다시 증가 >> 총 2점 증가
                      self.compute() # 위치를 계산해 화면으로 출력
                      self.increment=0 # increment를 0으로 변경
-                     self.fix = 1 # change
+                     self.fix1 = 1 # change
+                     self.fix2 = 1 # change
                      
             elif self.increment==0: # increment가 0이면
                 self.laps=0 # 시간 초기화
 
            # change
-            if self.point % 3 == 0 and self.fix: # 3점을 얻을 때 마다 속도가 빨라진다
+            if self.point % 3 == 0 and self.fix1: # 3점을 얻을 때 마다 속도가 빨라진다  
                 game.speed -= 250 # change
-                self.fix = 0 # change
+                self.fix1 = 0 # change
 
+            if self.point % 2 == 0 and self.fix2:
+                self.celebrate()
+                self.fix2 = 0
 
             # Double point if 200 points is reached without lose a life
             # miss를 발생시키지 않고 200점을 넘으면 점수를 두배로 얻는다
@@ -1522,11 +1530,69 @@ class Score:
                 self.point=game.point-999
                 self.rect=self.rect.move(-200,70)
                 game.surface.blit(game.bg,game.bg.get_rect())
-            
+
+    def celebrate(self): # change
+        info=Information("congratulations!",100,200,3,RED) # 축하 메세지
+        game.allTexts.add(info) # 축하 메세지
+        game.allTexts.clear(game.surface,game.bg) # 메세지 그리기
+        game.allTexts.draw(game.surface) # 화면에 출력
+        pygame.display.update() # 화면 업데이트 
+        pygame.time.wait(300)
+        info.kill()
+
+        info=Information("congratulations!",100,200,3,ORANGE) # 축하 메세지
+        game.allTexts.add(info) # 축하 메세지
+        game.allTexts.clear(game.surface,game.bg) # 메세지 그리기
+        game.allTexts.draw(game.surface) # 화면에 출력
+        pygame.display.update() # 화면 업데이트 
+        pygame.time.wait(300)
+        info.kill()
+
+        info=Information("congratulations!",100,200,3,YELLOW) # 축하 메세지
+        game.allTexts.add(info) # 축하 메세지
+        game.allTexts.clear(game.surface,game.bg) # 메세지 그리기
+        game.allTexts.draw(game.surface) # 화면에 출력
+        pygame.display.update() # 화면 업데이트 
+        pygame.time.wait(300)
+        info.kill()
+
+        info=Information("you get the score " + str(self.point),100,200,3,GREEN) # 축하 메세지
+        game.allTexts.add(info) # 축하 메세지
+        game.allTexts.clear(game.surface,game.bg) # 메세지 그리기
+        game.allTexts.draw(game.surface) # 화면에 출력
+        pygame.display.update() # 화면 업데이트 
+        pygame.time.wait(300)
+        info.kill()
+
+        info=Information("you get the score " + str(self.point),100,200,3,BLUE) # 축하 메세지
+        game.allTexts.add(info) # 축하 메세지
+        game.allTexts.clear(game.surface,game.bg) # 메세지 그리기
+        game.allTexts.draw(game.surface) # 화면에 출력
+        pygame.display.update() # 화면 업데이트 
+        pygame.time.wait(300)
+        info.kill()
+
+        info=Information("you get the score " + str(self.point),100,200,3,BLACK) # 축하 메세지
+        game.allTexts.add(info) # 축하 메세지
+        game.allTexts.clear(game.surface,game.bg) # 메세지 그리기
+        game.allTexts.draw(game.surface) # 화면에 출력
+        pygame.display.update() # 화면 업데이트 
+        pygame.time.wait(300)
+        info.kill()
+
+        info=Information("you get the score " + str(self.point),100,200,3,GREY) # 축하 메세지
+        game.allTexts.add(info) # 축하 메세지
+        game.allTexts.clear(game.surface,game.bg) # 메세지 그리기
+        game.allTexts.draw(game.surface) # 화면에 출력
+        pygame.display.update() # 화면 업데이트 
+        pygame.time.wait(300)
+        info.kill()
+
+ 
 if __name__ == '__main__':
     environement()
     game=Game()
-    score=Score()
+    score=Score()   
     
     # Mario
     mario=Mario()
