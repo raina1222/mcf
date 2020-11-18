@@ -1505,7 +1505,7 @@ class Score:
                 game.speed -= 250 # change
                 self.fix1 = 0 # change
 
-            if self.point % 2 == 0 and self.fix2:
+            if self.point % 10 == 0 and self.fix2:
                 self.celebrate()
                 self.fix2 = 0
 
