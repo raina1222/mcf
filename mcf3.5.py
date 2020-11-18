@@ -415,7 +415,7 @@ class Mario(pygame.sprite.Sprite):
         self.laps2=0 # 마리오의 팔을 움직이는데 사용
         self.blink_state=0 # 마리오가 깜빡인 수
         self.arm_down=False # 레버를 내리기 위해 팔을 내리면 true
-        game.speed=game.speed_save 
+        game.speed=game.speed_save # 1500으로 초기화
 
     def update(self,way=-1):
         '''
@@ -1460,6 +1460,7 @@ class Score:
         self.laps=0 # 경과 시간
         self.clock=pygame.time.Clock()
         self.increment=0 # 추가할 점수
+        self.fix = 0 # change
         
     def update(self):
     # laver에서 설정한 increment에 따라서 점수를 증가시킨다
@@ -1472,6 +1473,7 @@ class Score:
                 self.point+=1*self.inc # 1점 증가
                 self.compute() # 위치를 계산해 화면으로 출력
                 self.increment=0 # increment를 0으로 변경
+                self.fix = 1 # change
                 
             elif self.increment==2: # 1층에서 화물차로 시멘트를 내려보낸 경우.1
                 # Addint point immediat
@@ -1479,6 +1481,7 @@ class Score:
                 self.compute() # 위치를 계산해 화면으로 출력
                 self.laps=0 # 시간 초기화
                 self.increment=3 # increment를 3으로 변경
+                self.fix = 1 # change
 
             elif self.increment==3: # 1층에서 화물차로 시멘트를 내려보낸 경우.2
                 # Wait 200 msecond before adding the next point
@@ -1487,13 +1490,16 @@ class Score:
                      self.point+=1*self.inc # 1점 다시 증가 >> 총 2점 증가
                      self.compute() # 위치를 계산해 화면으로 출력
                      self.increment=0 # increment를 0으로 변경
+                     self.fix = 1 # change
                      
             elif self.increment==0: # increment가 0이면
                 self.laps=0 # 시간 초기화
 
-            # Increase The speed when 200 point is reached
-            if self.point >= 200: # 점수가 200점을 넘으면 게임의 속도가 빨라진다
-                game.speed = 1250
+           # change
+            if self.point % 3 == 0 and self.fix: # 3점을 얻을 때 마다 속도가 빨라진다
+                game.speed -= 250 # change
+                self.fix = 0 # change
+
 
             # Double point if 200 points is reached without lose a life
             # miss를 발생시키지 않고 200점을 넘으면 점수를 두배로 얻는다
@@ -1577,7 +1583,7 @@ if __name__ == '__main__':
     
     while not events_handle(): # 이벤트가 발생하는 동안
         while not events_handle() and mario.life!=0: # 생명이 남아있는 동안 
-            #print (game.speed)
+            print (game.speed)
             if game.stop==False: # 멈추지 않는다
                                 
                 # Elevator at right is created afer 800 milliseconds
