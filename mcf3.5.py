@@ -269,9 +269,9 @@ class Game():
         #-----------------------------------------------
         # Load ciment
         #-----------------------------------------------
-        self.ciment0=pygame.image.load("./graph/ciment00.png") # 떨어지는 시멘트 이미지
+        self.ciment0=pygame.image.load("./graph/ciment00.png") # 탱크로 떨어지는 시멘트 이미지
         self.ciment1=pygame.image.load("./graph/ciment01.png")
-        self.ciment2=pygame.image.load("./graph/ciment02.png")
+        self.ciment2=pygame.image.load("./graph/ciment02.png") # 탱크안의 시멘트 이미지
         self.ciment3=pygame.image.load("./graph/ciment03.png")
         self.ciment4=pygame.image.load("./graph/ciment04.png")
         
@@ -1505,8 +1505,9 @@ class Score:
                 game.speed -= 250 # change
                 self.fix1 = 0 # change
 
-            if self.point % 10 == 0 and self.fix2:
-                self.celebrate()
+            # change
+            if self.point % 10 == 0 and self.fix2: # 10점을 얻을 때 마다 축하 메세지를 출력한다
+                self.celebrate() # 축하메세지 출력
                 self.fix2 = 0
 
             # Double point if 200 points is reached without lose a life
@@ -1531,7 +1532,8 @@ class Score:
                 self.rect=self.rect.move(-200,70)
                 game.surface.blit(game.bg,game.bg.get_rect())
 
-    def celebrate(self): # change
+    # change
+    def celebrate(self): # 축하 메세지를
         info=Information("congratulations!",100,200,3,RED) # 축하 메세지
         game.allTexts.add(info) # 축하 메세지
         game.allTexts.clear(game.surface,game.bg) # 메세지 그리기
@@ -1592,7 +1594,7 @@ class Score:
 if __name__ == '__main__':
     environement()
     game=Game()
-    score=Score()   
+    score=Score()
     
     # Mario
     mario=Mario()
