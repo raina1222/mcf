@@ -263,23 +263,22 @@ class Game():
         self.bac3=pygame.image.load("./graph/bac3.png") # full bac
         self.bac4=pygame.image.load("./graph/bac4.png") # 열린 full bac
         self.bac5=pygame.image.load("./graph/bac5.png") # ^ 좌우 반전
+        # 보너스 시멘트가 들어있는 bac이미지
+        self.bac6=pygame.image.load("./graph/bac6.png") # full bac
+        self.bac7=pygame.image.load("./graph/bac7.png") # 열린 full bac
+        self.bac8=pygame.image.load("./graph/bac8.png") # ^ 좌우 반전
         
         self.allBacs=pygame.sprite.RenderUpdates()
         
         #-----------------------------------------------
         # Load ciment
         #-----------------------------------------------
-        self.ciment0=pygame.image.load("./graph/ciment00.png") # 탱크로 떨어지는 시멘트 이미지
-        self.ciment1=pygame.image.load("./graph/ciment01.png")
-        self.ciment2=pygame.image.load("./graph/ciment02.png") # 탱크안의 시멘트 이미지
-        self.ciment3=pygame.image.load("./graph/ciment03.png")
-        self.ciment4=pygame.image.load("./graph/ciment04.png")
-        
-        self.ciment5=pygame.transform.flip(self.ciment3,True,False) # 좌우반전
-        self.ciment6=pygame.transform.flip(self.ciment4,True,False)
-        
-        # Cement over the Trucks     
-        self.ciment7=pygame.image.load("./graph/ciment07.png") # 트럭에 떨어지는 시멘트
+        self.ciment0=pygame.image.load("./graph/ciment00.png") # 탱크로 떨어지는 시멘트
+        self.ciment1=pygame.image.load("./graph/ciment01.png") # 탱크로 떨어지는 보너스 시멘트
+        self.ciment2=pygame.image.load("./graph/ciment02.png") # 탱크안의 시멘트
+        self.ciment3=pygame.image.load("./graph/ciment03.png") # 탱크안의 보너스 시멘트
+        self.ciment4=pygame.image.load("./graph/ciment04.png") # 트럭에 떨어지는 시멘트
+        self.ciment5=pygame.image.load("./graph/ciment05.png") # 트럭에 떨어지는 보너스 시멘트
 
         
         #-----------------------------------------------
@@ -1375,7 +1374,7 @@ class Cement(pygame.sprite.Sprite):
         # Cement over the left Truck
         # 왼쪽 화물차에 시멘트가 떨어진다
         if self.num==7:
-            self.image=game.ciment7 # 이미지 설정
+            self.image=game.ciment4 # 이미지 설정
             self.rect=self.image.get_rect()
             self.rect.left=45 # 위치 설정
             self.rect.top=350
@@ -1383,7 +1382,7 @@ class Cement(pygame.sprite.Sprite):
         # Cement over the right Truck
         # 오른쪽 화물차에 시멘트가 떨어진다
         elif self.num==8:
-            self.image=game.ciment7 # 이미지 설정
+            self.image=game.ciment4 # 이미지 설정
             self.rect=self.image.get_rect()
             self.rect.left=565 # 위치 설정
             self.rect.top=350   
