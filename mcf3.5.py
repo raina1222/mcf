@@ -257,6 +257,7 @@ class Game():
         #-----------------------------------------------
         # Load bac
         #-----------------------------------------------
+        # change
         self.bac0=pygame.image.load("./graph/bac0.png") # empty bac
         self.bac1=pygame.image.load("./graph/bac1.png") # 열린 empty bac
         self.bac2=pygame.image.load("./graph/bac2.png") # ^ 좌우반전
@@ -273,6 +274,7 @@ class Game():
         #-----------------------------------------------
         # Load ciment
         #-----------------------------------------------
+        # change
         self.ciment0=pygame.image.load("./graph/ciment00.png") # 탱크로 떨어지는 시멘트
         self.ciment1=pygame.image.load("./graph/ciment01.png") # 탱크로 떨어지는 보너스 시멘트
         self.ciment2=pygame.image.load("./graph/ciment02.png") # 탱크안의 시멘트
@@ -676,16 +678,20 @@ class Bac(pygame.sprite.Sprite):
         # 200-275 : 2 CHANCE SUR 3
         # 275-300 : 3 SUR 3
         
-        self.full=randint(0,1) # 0또는 1 랜덤으로 발생(0: empty/ 1: full)
+        self.full=randint(0,1) # 0또는 1 랜덤으로 발생(0: empty/ 1: full)       
         self.side=side # 오른쪽 왼쪽
-        
-        #self.side="left"
-        #self.full=1
-        
+
+        # change
         if self.full==0: # 비어있는 경우
             self.image=game.bac0 # bac empty 이미지
-        else: # 시멘트가 차있는 경우
-            self.image=game.bac3 # bac full 이미지
+         # 시멘트가 차있는 경우
+        else: # 1/4 확율로 보너스 시멘트 생성
+            if randint(0,3) == 1:
+                self.bonus = 1 # 보너스 시멘트
+                self.image=game.bac6 # bac full 이미지
+            else:
+                self.bonus = 0 # 일반 시멘트
+                self.image=game.bac3 # bac full 이미지
 
         self.rect=self.image.get_rect()
         
@@ -738,7 +744,7 @@ class Bac(pygame.sprite.Sprite):
                                 # Update Tank value
                                 #--------------------------------
                                 tank1.t[0]=1 # 탱크 맨 위에 시멘트를 내려보낸다
-                                bar=Bar(175) # 왼쪽, 175에 위치한 시멘트 막대기 생성
+                                bar=Bar(175, self.bonus) # 왼쪽, 175에 위치한 시멘트 막대기 생성
                                 tank1.update_tank=True
                                 tank1.laps=0
                     else: # game speed*2 보다 시간이 지난 경우 bac이 열려야하는 위치(45)에 도착해도 열리지 않는다
@@ -786,7 +792,7 @@ class Bac(pygame.sprite.Sprite):
                                     # Update Tank value
                                     #--------------------------------
                                     tank2.t[0]=1 # 맨 아래 시멘트를 없앤다
-                                    bar=Bar(175,"right") # 오른쪽 175위치에 시멘트 막대기 생성
+                                    bar=Bar(175,self.bonus,"right") # 오른쪽 175위치에 시멘트 막대기 생성
                                     tank2.update_tank=True
                                     tank2.laps=0 # 시간 초기화
                         else: # game speed*2 보다 시간이 지난 경우 bac이 열려야하는 위치(550)에 도착해도 열리지 않는다
@@ -866,62 +872,74 @@ class Tank(pygame.sprite.Sprite):
                         if self.pos=="NO" or self.pos=="NE": # 위층 탱크
                             # the first step in the falling
                             if i==1: # 처음
-                               # Create the new bar in the pos 1 
-                               bar=Bar(200,self.side) # [1]의 위치에 시멘트 바를 생성한다
-                               # Delete the previous bar in the pos 0
-                               # [0]위치의 바를 삭제
+                                # Delete the previous bar in the pos 0
+                                # [0]위치의 바를 삭제
                                for obj in game.allBars:
-                                   if obj.rect.top==175 and obj.side==self.side: # [0]위치
-                                       obj.kill() # 삭제
+                                    if obj.rect.top==175 and obj.side==self.side: # [0]위치
+                                        self.bonus=obj.bonus # change
+                                        obj.kill() # 삭제
+                               # Create the new bar in the pos 1 
+                               bar=Bar(200,self.bonus,self.side) # [1]의 위치에 시멘트 바를 생성한다 
+
                             # the second step in the falling
                             elif i==2: # 두 번째
-                               # Create the new bar in the pos 2
-                               bar=Bar(215,self.side) # [2]의 위치에 시멘트 바를 생성한다
-                               # Delete the previous bar in the pos 1
-                               # [1]위치의 바를 삭제
-                               for obj in game.allBars:
-                                   if obj.rect.top==200 and obj.side==self.side:
-                                       obj.kill()
+                                # Delete the previous bar in the pos 1
+                                # [1]위치의 바를 삭제
+                                for obj in game.allBars:
+                                    if obj.rect.top==200 and obj.side==self.side:
+                                        self.bonus=obj.bonus # change
+                                        obj.kill()
+                                # Create the new bar in the pos 2
+                                bar=Bar(215,self.bonus,self.side) # [2]의 위치에 시멘트 바를 생성한다
+                               
                             # the third step in the falling
                             elif i==3: # 세 번째
-                               # Create the new bar in the pos 3. This is the last pos of the tank
-                               bar=Bar(230,self.side) # [3]의 위치에 시멘트 바를 생성한다
-                               # Delete the previous bar in the pos 2
-                               # [2]위치의 바를 삭제
-                               for obj in game.allBars:
-                                   if obj.rect.top==215 and obj.side==self.side:
-                                       obj.kill()
+                                # Delete the previous bar in the pos 2
+                                # [2]위치의 바를 삭제
+                                for obj in game.allBars:
+                                    if obj.rect.top==215 and obj.side==self.side:
+                                        self.bonus=obj.bonus # change
+                                        obj.kill()
+                                # Create the new bar in the pos 3. This is the last pos of the tank
+                                bar=Bar(230,self.bonus,self.side) # [3]의 위치에 시멘트 바를 생성한다
+                                
                         #------------------------------------------
                         # Tank at the botton
                         #------------------------------------------
                         else: # 아래층 탱크
                             # the first step in the falling
-                            if i==1: #
-                               # Create the new bar in the pos 1 
-                               bar=Bar(285,self.side) # [1]의 위치에 시멘트 바를 생성한다
-                               # Delete the previous bar in the pos 0
-                               # [0]위치의 바를 삭제
-                               for obj in game.allBars:
-                                   if obj.rect.top==265 and obj.side==self.side:
-                                       obj.kill()
+                            if i==1:
+                                # Delete the previous bar in the pos 0
+                                # [0]위치의 바를 삭제
+                                for obj in game.allBars:
+                                    if obj.rect.top==265 and obj.side==self.side:
+                                        self.bonus=obj.bonus # change
+                                        obj.kill()
+                                # Create the new bar in the pos 1 
+                                bar=Bar(285,self.bonus,self.side) # [1]의 위치에 시멘트 바를 생성한다
+                               
                             # the second step in the falling
                             elif i==2:
-                               # Create the new bar in the pos 2
-                               bar=Bar(300,self.side) # [2]의 위치에 시멘트 바를 생성한다
-                               # Delete the previous bar in the pos 1
-                               # [1]위치의 바를 삭제
-                               for obj in game.allBars:
-                                   if obj.rect.top==285 and obj.side==self.side:
-                                       obj.kill()
+                                # Delete the previous bar in the pos 1
+                                # [1]위치의 바를 삭제
+                                for obj in game.allBars:
+                                    if obj.rect.top==285 and obj.side==self.side:
+                                        self.bonus=obj.bonus # change
+                                        obj.kill()
+                                # Create the new bar in the pos 2
+                                bar=Bar(300,self.bonus,self.side) # [2]의 위치에 시멘트 바를 생성한다
+                               
                             # the third step in the falling
                             elif i==3:
-                               # Create the new bar in the pos 3. This is the last pos of the tank
-                               bar=Bar(315,self.side) # [3]의 위치에 시멘트 바를 생성한다
-                               # Delete the previous bar in the pos 2
-                               # [2]위치의 바를 삭제
-                               for obj in game.allBars:
-                                   if obj.rect.top==300 and obj.side==self.side:
-                                       obj.kill()
+                                # Delete the previous bar in the pos 2
+                                # [2]위치의 바를 삭제
+                                for obj in game.allBars:
+                                    if obj.rect.top==300 and obj.side==self.side:
+                                        self.bonus=obj.bonus # change
+                                        obj.kill()
+                                # Create the new bar in the pos 3. This is the last pos of the tank
+                                bar=Bar(315,self.bonus,self.side) # [3]의 위치에 시멘트 바를 생성한다
+                               
                             #break # ici
                     elif self.t==[0,1,1,1]:
                         # Delete the  bar in the pos 0
@@ -963,17 +981,23 @@ class Bar(pygame.sprite.Sprite):
     The bars for the tanks
     '''
     #생성자 파라미터로 스프라이트에 사용될 이미지 경로와 스프라이트 초기 위치를 받는다
-    def __init__(self,y=175,side="left"):
+    def __init__(self,y=175,bonus=0,side="left"):
         pygame.sprite.Sprite.__init__(self)
         self.side=side
+        self.bonus=bonus
         
         # Cement  is already in tank, so it is a bar
         # 탱크 안의 시멘트는 바 이미지
         if y!=175 and  y!=265:
-            self.image=game.ciment2
+            if self.bonus:
+                self.image=game.ciment3
+            else:
+                self.image=game.ciment2
         else: # 탱크로 떨어지는 이미지
-            # Cement is just falling down in the tank
-            self.image=game.ciment0
+            if self.bonus:
+                self.image=game.ciment1 # 보너스 시멘트
+            else:
+                self.image=game.ciment0 # 일반 시멘트
                     
         self.rect=self.image.get_rect()
         
@@ -1301,15 +1325,19 @@ class Lever(pygame.sprite.Sprite):
                             tank.t[3]=0 # 시멘트를 없앤다
                             for bar in game.allBars:
                                 if bar.side=="left" and bar.rect.top==230: # 탱크 맨 아래의 시멘트 바를 없앤다
+                                    self.bonus=bar.bonus # change
                                     game.allBars.remove(bar)  
-                            #score.point+=1
-                            score.increment=1 # 클래스 score에서 사용한다
+                            # change
+                            if self.bonus:
+                                score.increment=2 # 2점 증가
+                            else:
+                                score.increment=1 # 1점 증가
                             # Fill the tank above
                             game.play_sound(game.cement_fall) # 시멘트가 떨어지는 효과음을 낸다
                             for tank in game.allTanks:
                                 if tank.pos=="SO": # 왼쪽 아래 탱크
                                     tank.t[0]=1 # 맨 위에 시멘트 추가
-                                    bar=Bar(265,"left") # 바 생성
+                                    bar=Bar(265,self.bonus,"left") # 바 생성
                                 
                 elif self.pos=="NE": # 오른쪽 위
                     for tank in game.allTanks:
@@ -1318,15 +1346,19 @@ class Lever(pygame.sprite.Sprite):
                             tank.t[3]=0 # 시멘트를 없앤다
                             for bar in game.allBars:
                                 if bar.side=="right" and bar.rect.top==230: # 탱크 맨 아래의 시멘트 바를 없앤다
+                                    self.bonus=bar.bonus # change
                                     game.allBars.remove(bar)   
-                            #score.point+=1
-                            score.increment=1 # 클래스 score에서 사용
+                            # change
+                            if self.bonus:
+                                score.increment=2 # 2점 증가
+                            else:
+                                score.increment=1 # 1점 증가
                             # Fill the tank above
                             game.play_sound(game.cement_fall) # 시멘트가 떨어지는 효과음
                             for tank in game.allTanks:
                                 if tank.pos=="SE": # 오른쪽 아래 탱크
                                     tank.t[0]=1 # 맨 위에 시멘트 추가
-                                    bar=Bar(265,"right") # 바 생성
+                                    bar=Bar(265,self.bonus,"right") # 바 생성
                                 
                 elif self.pos=="SO": # 왼쪽 아래
                     for tank in game.allTanks:
@@ -1335,12 +1367,16 @@ class Lever(pygame.sprite.Sprite):
                             tank.t[3]=0 # 시멘트를 없앤다
                             for bar in game.allBars:
                                 if bar.side=="left" and bar.rect.top==315: # 탱크 맨 아래의 시멘트 바를 없앤다
+                                    self.bonus=bar.bonus # change
                                     game.allBars.remove(bar)   
-                            #score.point+=2
-                            score.increment=2 # 클래스 score에서 사용
+                            # change
+                            if self.bonus:
+                                score.increment=4 # 2점 증가
+                            else:
+                                score.increment=2 # 1점 증가
                             game.play_sound(game.cement_fall) # 시멘트가 떨어지는 효과음
                             # Cement over the left truck
-                            cement=Cement(num=7) # 아래로 내려보낸다
+                            cement=Cement(7,self.bonus) # 아래로 내려보낸다
                             game.allCements.add(cement) # 그룹에 추가
                             
                 elif self.pos=="SE": # 오른쪽 아래
@@ -1350,12 +1386,16 @@ class Lever(pygame.sprite.Sprite):
                             tank.t[3]=0 # 시멘트를 없앤다
                             for bar in game.allBars:
                                 if bar.side=="right" and bar.rect.top==315: # 탱크 맨 아래의 시멘트 바를 없앤다
+                                    self.bonus=bar.bonus # change
                                     game.allBars.remove(bar)   
-                            #score.point+=2
-                            score.increment=2 # 클래스 score에서 사용
+                            # change
+                            if self.bonus:
+                                score.increment=4 # 2점 증가
+                            else:
+                                score.increment=2 # 1점 증가
                             game.play_sound(game.cement_fall) # 시멘트가 떨어지는 효과음
                             # Cement over the truck
-                            cement=Cement(num=8) # 아래로 내려보낸다
+                            cement=Cement(8,self.bonus) # 아래로 내려보낸다
                             game.allCements.add(cement) # 그룹에 추가
                                                  
             self.switch="up" # 스위치를 올려준다
@@ -1364,25 +1404,34 @@ class Lever(pygame.sprite.Sprite):
             
 class Cement(pygame.sprite.Sprite):
 
-    def  __init__(self,num=None):
+    def  __init__(self,num=None,bonus=0):
         pygame.sprite.Sprite.__init__(self)
         
         self.clock=pygame.time.Clock()
         self.laps=0 # 경과 시간
         self.num=num
+        self.bonus=bonus
         
+        # change
         # Cement over the left Truck
         # 왼쪽 화물차에 시멘트가 떨어진다
         if self.num==7:
-            self.image=game.ciment4 # 이미지 설정
+            if bonus: # 보너스 시멘트
+                self.image=game.ciment5 # 이미지 설정
+            else: # 일반 시멘트
+                self.image=game.ciment4 # 이미지 설정
             self.rect=self.image.get_rect()
             self.rect.left=45 # 위치 설정
             self.rect.top=350
             
+        # change
         # Cement over the right Truck
         # 오른쪽 화물차에 시멘트가 떨어진다
         elif self.num==8:
-            self.image=game.ciment4 # 이미지 설정
+            if bonus: # 보너스 시멘트
+                self.image=game.ciment5 # 이미지 설정
+            else: # 일반 시멘트
+                self.image=game.ciment4 # 이미지 설정
             self.rect=self.image.get_rect()
             self.rect.left=565 # 위치 설정
             self.rect.top=350   
@@ -1466,18 +1515,18 @@ class Score:
     def update(self):
     # laver에서 설정한 increment에 따라서 점수를 증가시킨다
     # increment가 1이면 점수를 1 증가시킨다
-    # increment가 2면 먼저 점수를 1 증가시키고 200밀리초동안 기다린 다음 점수를 1 더 증가시킨다   
+    # increment가 2면 먼저 점수를 1 증가시키고 200밀리초동안 기다린 다음 점수를 1 더 증가시킨다  
+    # increment가 4면 150ms간격을 두고 총 4점 증가시킨다 
             self.clock.tick()
             
-            # Addint point immediatly
-            if self.increment==1: # 2층에서 1층으로 시멘트를 내려보낸 경우
+            if self.increment==1: # 1점 증가
                 self.point+=1*self.inc # 1점 증가
                 self.compute() # 위치를 계산해 화면으로 출력
                 self.increment=0 # increment를 0으로 변경
                 self.fix1 = 1 # change
                 self.fix2 = 1 # change
                 
-            elif self.increment==2: # 1층에서 화물차로 시멘트를 내려보낸 경우.1
+            elif self.increment==2: # 2점 증가.1
                 # Addint point immediat
                 self.point+=1*self.inc # 먼저 1점 증가
                 self.compute() # 위치를 계산해 화면으로 출력
@@ -1486,11 +1535,50 @@ class Score:
                 self.fix1 = 1 # change
                 self.fix2 = 1 # change
 
-            elif self.increment==3: # 1층에서 화물차로 시멘트를 내려보낸 경우.2
+            elif self.increment==3: # 2점 증가.2
                 # Wait 200 msecond before adding the next point
                 self.laps+=self.clock.get_time()
                 if self.laps>200: # 200ms후에 점수 증가
                      self.point+=1*self.inc # 1점 다시 증가 >> 총 2점 증가
+                     self.compute() # 위치를 계산해 화면으로 출력
+                     self.increment=0 # increment를 0으로 변경
+                     self.fix1 = 1 # change
+                     self.fix2 = 1 # change
+
+            # change
+            elif self.increment==4: # 4점 증가.1
+                # Addint point immediat
+                self.point+=1*self.inc # 먼저 1점 증가
+                self.compute() # 위치를 계산해 화면으로 출력
+                self.laps=0 # 시간 초기화
+                self.increment=5 # increment를 5로 변경
+                self.fix1 = 1 # change
+                self.fix2 = 1 # change
+
+            # change
+            elif self.increment==5: # 4점 증가.2
+                self.laps+=self.clock.get_time()
+                if self.laps>150: # 150ms후에 점수 증가
+                     self.point+=1*self.inc # 1점 다시 증가 >> 총 2점 증가
+                     self.compute() # 위치를 계산해 화면으로 출력
+                     self.increment=6 # increment를 6으로 변경
+                     self.fix1 = 1 # change
+                     self.fix2 = 1 # change
+
+            # change
+            elif self.increment==6: # 4점 증가.3
+                self.laps+=self.clock.get_time()
+                if self.laps>300: # 300ms후에 점수 증가
+                     self.point+=1*self.inc # 1점 다시 증가 >> 총 3점 증가
+                     self.compute() # 위치를 계산해 화면으로 출력
+                     self.increment=7 # increment를 7로 변경
+                     self.fix1 = 1 # change
+                     self.fix2 = 1 # change
+            # change
+            elif self.increment==7: # 4점 증가.4
+                self.laps+=self.clock.get_time()
+                if self.laps>450: # 450ms후에 점수 증가
+                     self.point+=1*self.inc # 1점 다시 증가 >> 총 4점 증가
                      self.compute() # 위치를 계산해 화면으로 출력
                      self.increment=0 # increment를 0으로 변경
                      self.fix1 = 1 # change
@@ -1500,7 +1588,7 @@ class Score:
                 self.laps=0 # 시간 초기화
 
            # change
-            if self.point % 3 == 0 and self.fix1: # 3점을 얻을 때 마다 속도가 빨라진다  
+            if self.point % 5 == 0 and self.fix1: # 5점을 얻을 때 마다 속도가 빨라진다  
                 game.speed -= 250 # change
                 self.fix1 = 0 # change
 
