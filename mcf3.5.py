@@ -1595,7 +1595,7 @@ class Score:
             # change
             if self.point % 10 == 0 and self.fix2: # 10점을 얻을 때 마다 축하 메세지를 출력한다
                 self.celebrate() # 축하메세지 출력
-                self.fix2 = 0
+                self.fix2 = 0 # change
 
             # Double point if 200 points is reached without lose a life
             # miss를 발생시키지 않고 200점을 넘으면 점수를 두배로 얻는다
