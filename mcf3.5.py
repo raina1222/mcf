@@ -302,6 +302,24 @@ class Game():
         self.heart01=pygame.transform.scale(self.heart00, (30,25))
         
         self.allHearts=pygame.sprite.RenderUpdates()
+
+        #-----------------------------------------------
+        # Load Button
+        #-----------------------------------------------
+        ## change
+        self.btn=4*[0]
+        self.b00=pygame.image.load("./graph/info.png") #3 게임설명 아이콘
+        self.b01=pygame.image.load("./graph/on.png") ## 소리 on
+        self.b02=pygame.image.load("./graph/mute.png") ## 음소거 아이콘
+        self.b03=pygame.image.load("./graph/retry.png") ## 다시시작 아이콘
+
+        ## resize해서 배열에 저장
+        self.btn[0]=pygame.transform.scale(self.b00, (35,35))
+        self.btn[1]=pygame.transform.scale(self.b01, (45,45))
+        self.btn[2]=pygame.transform.scale(self.b02, (37,37))
+        self.btn[3]=pygame.transform.scale(self.b03, (120,120))
+        
+        self.allBtns=pygame.sprite.RenderUpdates()
         
         #-----------------------------------------------
         # Load the sounds
@@ -388,8 +406,12 @@ class Game():
 class Button(pygame.sprite.Sprite):
     def __init__(self,index,x,y,):
         pygame.sprite.Sprite.__init__(self)
-        self.image=game.button[index]
+        self.image=game.btn[index]
         self.rect=self.image.get_rect()
+        self.rect.left=x
+        self.rect.top=y
+        self.width=self.image.get_width()
+        self.height=self.image.get_height()
 
 class Mario(pygame.sprite.Sprite):
     
@@ -1781,6 +1803,15 @@ if __name__ == '__main__':
     environement()
     game=Game()
     score=Score()
+
+    btn1=Button(0,10,60)
+    btn2=Button(1,50,55)
+    btn3=Button(2,95,60)
+    btn4=Button(3,260,200)
+    game.allBtns.add(btn1)
+    game.allBtns.add(btn2)
+    game.allBtns.add(btn3)
+    game.allBtns.add(btn4)
     
     # Mario
     mario=Mario()
@@ -1873,7 +1904,10 @@ if __name__ == '__main__':
                 
                 game.allCements.clear(game.surface,game.bg) # 시멘트를 그린다
                 game.allCements.draw(game.surface) # 시멘트 출력
-                game.allCements.update() # 시멘트의 상태 변화           
+                game.allCements.update() # 시멘트의 상태 변화
+                
+                game.allBtns.clear(game.surface,game.bg) # bac을 그린다
+                game.allBtns.draw(game.surface) # bac을 화면에 출력
                 
                 game.allBacs.clear(game.surface,game.bg) # bac을 그린다
                 game.allBacs.draw(game.surface) # bac을 화면에 출력
