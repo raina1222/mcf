@@ -159,7 +159,7 @@ def wait(time):
         laps_to_wait+=clock.get_time()
         #print(laps_to_wait)
     laps_to_wait=0
-        
+
 class Game():
     
     def __init__(self,size=(640,480)):
@@ -384,6 +384,13 @@ class Game():
             game.allDrivers.draw(game.surface)
             game.allDrivers.update()
         '''
+
+class Button(pygame.sprite.Sprite):
+    def __init__(self,index,x,y,):
+        pygame.sprite.Sprite.__init__(self)
+        self.image=game.button[index]
+        self.rect=self.image.get_rect()
+
 class Mario(pygame.sprite.Sprite):
     
     def __init__(self,life=3):
@@ -1113,7 +1120,9 @@ class Elevator(pygame.sprite.Sprite):
         game.play_sound(game.elevator_move) # 엘레베이터가 움직이는 효과음
 
         ## change
-        if randint(0,6)==1: ## 1/7 확율로 heart 아이템 생성
+        #self.heart=1
+        self.heart=randint(0,6) ## 1/7 확율로 heart 아이템 생성
+        if self.heart==1:
             heart=Heart(self.x,self.side,self.count) ## heart 아이템 생성
         
     def update(self):
@@ -1126,7 +1135,7 @@ class Elevator(pygame.sprite.Sprite):
         self.clock.tick()    
         if mario.ko==False: # 마리오가 살아있으면
             
-            self.laps+=self.clock.get_time() # 경과 시간
+            self.laps+=self.clock.get_time() # 경과시간
             if self.laps>game.speed:
                 
                 #-----------------------
@@ -1850,6 +1859,10 @@ if __name__ == '__main__':
                 game.allLevers.draw(game.surface) # 레버를 화면에 출력
                 game.allLevers.update() # 레버의 상태 변화
                 
+                game.allHearts.clear(game.surface,game.bg) # heart 아이템을 그린다
+                game.allHearts.draw(game.surface) # 화면에 출력
+                game.allHearts.update() # life 아이템의 상태변화
+                
                 game.Mario.clear(game.surface,game.bg) # 마리오를 그린다
                 game.Mario.draw(game.surface) # 마리오를 화면에 출력
                 game.Mario.update() # 마리오의 상태 변화
@@ -1860,11 +1873,7 @@ if __name__ == '__main__':
                 
                 game.allCements.clear(game.surface,game.bg) # 시멘트를 그린다
                 game.allCements.draw(game.surface) # 시멘트 출력
-                game.allCements.update() # 시멘트의 상태 변화
-                
-                game.allHearts.clear(game.surface,game.bg) # heart 아이템을 그린다
-                game.allHearts.draw(game.surface) # 화면에 출력
-                game.allHearts.update() # life 아이템의 상태변화
+                game.allCements.update() # 시멘트의 상태 변화           
                 
                 game.allBacs.clear(game.surface,game.bg) # bac을 그린다
                 game.allBacs.draw(game.surface) # bac을 화면에 출력
