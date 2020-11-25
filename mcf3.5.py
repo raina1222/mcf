@@ -257,7 +257,7 @@ class Game():
         #-----------------------------------------------
         # Load bac
         #-----------------------------------------------
-        # change
+        ## change
         self.bac0=pygame.image.load("./graph/bac0.png") # empty bac
         self.bac1=pygame.image.load("./graph/bac1.png") # 열린 empty bac
         self.bac2=pygame.image.load("./graph/bac2.png") # ^ 좌우반전
@@ -274,7 +274,7 @@ class Game():
         #-----------------------------------------------
         # Load ciment
         #-----------------------------------------------
-        # change
+        ## change
         self.ciment0=pygame.image.load("./graph/ciment00.png") # 탱크로 떨어지는 시멘트
         self.ciment1=pygame.image.load("./graph/ciment01.png") # 탱크로 떨어지는 보너스 시멘트
         self.ciment2=pygame.image.load("./graph/ciment02.png") # 탱크안의 시멘트
@@ -293,6 +293,15 @@ class Game():
         # Right Levers
         self.lever03=pygame.transform.flip(self.lever01,True,False)
         self.lever04=pygame.transform.flip(self.lever02,True,False)
+
+        #-----------------------------------------------
+        # Load Heart
+        #-----------------------------------------------
+        ## change
+        self.heart00=pygame.image.load("./graph/heart00.png")
+        self.heart01=pygame.transform.scale(self.heart00, (30,25))
+        
+        self.allHearts=pygame.sprite.RenderUpdates()
         
         #-----------------------------------------------
         # Load the sounds
@@ -502,7 +511,7 @@ class Mario(pygame.sprite.Sprite):
                 # stage than mario's stage
                 #------------------------------------------------------------------------------------------------------
                 # 마리오가 왼쪽 엘레베이터에 올라가있는지 확인
-                if (e.stage[e.count]==self.posy  and e.type=="left"):
+                if (e.stage[e.count]==self.posy  and e.side=="left"):
                     self.fall_left=False # 떨어지지 않도록 상태를 바꾼다
                     self.fall_right=None
                     break
@@ -521,7 +530,7 @@ class Mario(pygame.sprite.Sprite):
                 # stage than mario's stage
                 #------------------------------------------------------------------------------------------------------
                 # 마리오가 오른쪽 엘레베이터에 올라가있는지 확인
-                if (e.stage[e.count]==self.posy  and e.type=="right"):
+                if (e.stage[e.count]==self.posy  and e.side=="right"):
                     self.fall_right=False
                     self.fall_left=None
                     break
@@ -531,7 +540,7 @@ class Mario(pygame.sprite.Sprite):
             self.fall_right=None
         
         if self.fall_left==True: # 왼쪽에서 떨어진다
-                self.fall("left") 
+                self.fall("left")
         
         if self.fall_right==True: # 오른쪽에서 떨어진다
                 self.fall("right")
@@ -623,6 +632,15 @@ class Mario(pygame.sprite.Sprite):
         self.life-=1 # 생명이 줄어든다
         miss=Miss(self.life) # miss 아이콘 생성
         game.allMiss.add(miss)
+
+    ## change
+    def deleteMiss(self):
+        if self.life<3: ## miss가 발생하지 않았으면 아이템을 먹어도 효과가 없다
+            for obj in game.allMiss:
+                if obj.index==self.life: ## 마지막에 발생한 miss
+                    obj.kill() ## 삭제
+
+            self.life+=1 ## 생명이 늘어난다
             
     def beta(self,level):
         for e in self.stage[level]:
@@ -637,6 +655,7 @@ class Miss(pygame.sprite.Sprite): # miss아이콘
     '''
     def __init__(self,index):
         pygame.sprite.Sprite.__init__(self)
+        self.index=index
         self.image=game.miss[index] # miss 이미지 배열(line242) 
         self.rect=self.image.get_rect()
         if index==2: # 각 이미지에 대한 위치 설정
@@ -681,14 +700,14 @@ class Bac(pygame.sprite.Sprite):
         self.full=randint(0,1) # 0또는 1 랜덤으로 발생(0: empty/ 1: full)       
         self.side=side # 오른쪽 왼쪽
 
-        # change
+        ## change
         if self.full==0: # 비어있는 경우
             self.image=game.bac0 # bac empty 이미지
          # 시멘트가 차있는 경우
         else: # 1/4 확율로 보너스 시멘트 생성
             if randint(0,3) == 1:
                 self.bonus = 1 # 보너스 시멘트
-                self.image=game.bac6 # bac full 이미지
+                self.image=game.bac6 # 보너스 시멘트가 차있는 이미지
             else:
                 self.bonus = 0 # 일반 시멘트
                 self.image=game.bac3 # bac full 이미지
@@ -876,7 +895,7 @@ class Tank(pygame.sprite.Sprite):
                                 # [0]위치의 바를 삭제
                                for obj in game.allBars:
                                     if obj.rect.top==175 and obj.side==self.side: # [0]위치
-                                        self.bonus=obj.bonus # change
+                                        self.bonus=obj.bonus ## 보너스 여부를 기록
                                         obj.kill() # 삭제
                                # Create the new bar in the pos 1 
                                bar=Bar(200,self.bonus,self.side) # [1]의 위치에 시멘트 바를 생성한다 
@@ -887,7 +906,7 @@ class Tank(pygame.sprite.Sprite):
                                 # [1]위치의 바를 삭제
                                 for obj in game.allBars:
                                     if obj.rect.top==200 and obj.side==self.side:
-                                        self.bonus=obj.bonus # change
+                                        self.bonus=obj.bonus # 보너스 여부를 기록
                                         obj.kill()
                                 # Create the new bar in the pos 2
                                 bar=Bar(215,self.bonus,self.side) # [2]의 위치에 시멘트 바를 생성한다
@@ -898,7 +917,7 @@ class Tank(pygame.sprite.Sprite):
                                 # [2]위치의 바를 삭제
                                 for obj in game.allBars:
                                     if obj.rect.top==215 and obj.side==self.side:
-                                        self.bonus=obj.bonus # change
+                                        self.bonus=obj.bonus # 보너스 여부를 기록
                                         obj.kill()
                                 # Create the new bar in the pos 3. This is the last pos of the tank
                                 bar=Bar(230,self.bonus,self.side) # [3]의 위치에 시멘트 바를 생성한다
@@ -913,7 +932,7 @@ class Tank(pygame.sprite.Sprite):
                                 # [0]위치의 바를 삭제
                                 for obj in game.allBars:
                                     if obj.rect.top==265 and obj.side==self.side:
-                                        self.bonus=obj.bonus # change
+                                        self.bonus=obj.bonus # 보너스 여부를 기록
                                         obj.kill()
                                 # Create the new bar in the pos 1 
                                 bar=Bar(285,self.bonus,self.side) # [1]의 위치에 시멘트 바를 생성한다
@@ -924,7 +943,7 @@ class Tank(pygame.sprite.Sprite):
                                 # [1]위치의 바를 삭제
                                 for obj in game.allBars:
                                     if obj.rect.top==285 and obj.side==self.side:
-                                        self.bonus=obj.bonus # change
+                                        self.bonus=obj.bonus # 보너스 여부를 기록
                                         obj.kill()
                                 # Create the new bar in the pos 2
                                 bar=Bar(300,self.bonus,self.side) # [2]의 위치에 시멘트 바를 생성한다
@@ -935,7 +954,7 @@ class Tank(pygame.sprite.Sprite):
                                 # [2]위치의 바를 삭제
                                 for obj in game.allBars:
                                     if obj.rect.top==300 and obj.side==self.side:
-                                        self.bonus=obj.bonus # change
+                                        self.bonus=obj.bonus # 보너스 여부를 기록
                                         obj.kill()
                                 # Create the new bar in the pos 3. This is the last pos of the tank
                                 bar=Bar(315,self.bonus,self.side) # [3]의 위치에 시멘트 바를 생성한다
@@ -1014,7 +1033,23 @@ class Bar(pygame.sprite.Sprite):
         Nothing to do here; The bars are handled in class Tank
         '''
         pass
-    
+
+## change
+class Heart(pygame.sprite.Sprite): ## heart아이템
+
+    def __init__(self,x=272,side="left",count=0):
+
+        pygame.sprite.Sprite.__init__(self)
+        self.image=game.heart01 ## 이미지 지정
+        self.rect=self.image.get_rect()
+        game.allHearts.add(self)
+
+        self.y=[97,165,235,309,389] ## y좌표 배열
+        self.rect.left=x+17 ## x좌표
+        self.side=side ## 방향
+        self.count=count ## y배열의 인덱스
+        self.rect.top=self.y[self.count] ## y좌표 설정
+
 class Elevator(pygame.sprite.Sprite): 
     '''
     The elevators and count variable for left or right elevaror
@@ -1025,7 +1060,7 @@ class Elevator(pygame.sprite.Sprite):
     Stage 1 self.count=4 || self.count=1
     Stage 0 self.count=5 || self.count=0
     '''
-    def __init__(self,x=255,type="left",new=None):
+    def __init__(self,x=255,side="left",new=None):
         
         pygame.sprite.Sprite.__init__(self)        
         self.image=pygame.Surface((64,8)).convert_alpha() # 64x8 크기의 막대기
@@ -1036,12 +1071,13 @@ class Elevator(pygame.sprite.Sprite):
         # 각 층의 y좌표 
         # stage 5 4 3 2 1 
         self.y=[122,190,260,334,414]
-        self.type=type # 방향
+        self.x = x ## x좌표
+        self.side=side # 방향
         self.stage=[5,4,3,2,1] # 층
         self.new=new # 새로운 엘레베이터를 만드는 위치
         self.laps=0
         
-        if self.type=="left": # 왼쪽
+        if self.side=="left": # 왼쪽
             self.count=0 # 5층
             #self.new=randint(2,4)
             if self.new!=2:
@@ -1063,6 +1099,12 @@ class Elevator(pygame.sprite.Sprite):
         
         game.allElevators.add(self)
         game.play_sound(game.elevator_move) # 엘레베이터가 움직이는 효과음
+
+        ## change
+        #self.heart=1
+        self.heart=randint(0,5) ## 1/6 확율로 heart 아이템 생성
+        if self.heart==1:
+            heart=Heart(self.x,self.side,self.count) ## heart 아이템 생성
         
     def update(self):
         
@@ -1080,7 +1122,7 @@ class Elevator(pygame.sprite.Sprite):
                 #-----------------------
                 # Left Elevator 
                 #-----------------------               
-                if self.type=="left": # 왼쪽
+                if self.side=="left": # 왼쪽
 
                     if self.count<4: # 2~5층
                         self.count+=1 # 내려간다
@@ -1088,6 +1130,12 @@ class Elevator(pygame.sprite.Sprite):
                         self.rect.top=self.y[self.count] # y좌표 설정
                         if game.stop==False:
                             game.play_sound(game.elevator_move) # 효과음
+
+                        ## heart 아이템이 있으면 함께 이동한다
+                        for obj in game.allHearts:
+                                if obj.count==self.count-1 and obj.side==self.side: ## 동일한 위치에 있는 하트 아이템
+                                    obj.kill() ## 삭제
+                                    heart=Heart(self.x,self.side,self.count) ## 아래로 이동
                             
                         #------------------------------------------
                         # Move the Mario with elevator
@@ -1096,6 +1144,13 @@ class Elevator(pygame.sprite.Sprite):
                         #------------------------------------------
                         
                         if mario.fall_left==False: # 엘레베이터 위에 있으면
+
+                            if self.heart == 1: ## 하트 아이템이 있으면
+                                for obj in game.allHearts:
+                                    if obj.count==self.count and obj.side==self.side: ## 동일한 위치에 있는 하트 아이템
+                                        obj.kill() ## 삭제
+                                        mario.deleteMiss() ## miss 삭제
+                                
                             if mario.posy>1: # 2~5층에 있으면
                                mario.posy-=1 # 엘레베이터와 함께 내려간다
                                mario.fall_left=None
@@ -1115,7 +1170,13 @@ class Elevator(pygame.sprite.Sprite):
                         # 엘레베이터가 new에 위치하면 새로운 엘레베이터를 만든다
                         if  self.count==self.new:
                             elevator=Elevator(255,"left",self.new)
+
                     else: # 1층이면
+                        ## 하트 아이템 삭제
+                        for obj in game.allHearts:
+                                if obj.count==self.count and obj.side==self.side: ## 동일한 위치에 있는 하트 아이템
+                                    obj.kill() ## 삭제
+
                         self.reset() # 사라진다
                 
                 if self.laps>game.speed+50: # game speed에 50ms가 지나면                    
@@ -1129,11 +1190,24 @@ class Elevator(pygame.sprite.Sprite):
                         self.rect.top=self.y[self.count] # y좌표 설정
                         if game.stop==False:
                             game.play_sound(game.elevator_move) # 효과음
+
+                        ## heart 아이템이 있으면 함께 이동한다
+                        for obj in game.allHearts:
+                                if obj.count==self.count+1 and obj.side==self.side: ## 동일한 위치에 있는 하트 아이템
+                                    obj.kill() ## 삭제
+                                    heart=Heart(self.x,self.side,self.count) ## 위로 이동
                         
                         #------------------------------------------
                         # Move the Mario with elevator
                         #------------------------------------------                       
                         if mario.fall_right==False: # 마리오가 엘레베이터 위에 있으면
+
+                            if self.heart == 1: ## 하트 아이템이 있으면
+                                for obj in game.allHearts:
+                                    if obj.count==self.count and obj.side==self.side: ## 동일한 위치에 있는 하트 아이템
+                                        obj.kill() ## 삭제
+                                        mario.deleteMiss() ## miss 삭제
+
                             if mario.posy<5: # 1~4층에 있으면
                                 mario.posy+=1 # 엘레베이터와 함께 올라간다
                                 mario.fall_right=None
@@ -1155,6 +1229,11 @@ class Elevator(pygame.sprite.Sprite):
                             elevator=Elevator(325,"right") # 새로운 엘레베이터를 만든다
                             
                     else: # 5층이면
+                        ## 하트 아이템 삭제
+                        for obj in game.allHearts:
+                                if obj.count==self.count and obj.side==self.side: ## 동일한 위치에 있는 하트 아이템
+                                    obj.kill() ## 삭제
+
                         self.reset() # 사라진다
             else:
                 # Wait until game.SPEED 
@@ -1325,13 +1404,13 @@ class Lever(pygame.sprite.Sprite):
                             tank.t[3]=0 # 시멘트를 없앤다
                             for bar in game.allBars:
                                 if bar.side=="left" and bar.rect.top==230: # 탱크 맨 아래의 시멘트 바를 없앤다
-                                    self.bonus=bar.bonus # change
+                                    self.bonus=bar.bonus ## 보너스 여부 기록
                                     game.allBars.remove(bar)  
-                            # change
-                            if self.bonus:
-                                score.increment=2 # 2점 증가
-                            else:
-                                score.increment=1 # 1점 증가
+                            ## change
+                            if self.bonus: ## 보너스 시멘트면
+                                score.increment=2 ## 2점 증가
+                            else: ## 일반 시멘트면
+                                score.increment=1 ## 1점 증가
                             # Fill the tank above
                             game.play_sound(game.cement_fall) # 시멘트가 떨어지는 효과음을 낸다
                             for tank in game.allTanks:
@@ -1346,13 +1425,13 @@ class Lever(pygame.sprite.Sprite):
                             tank.t[3]=0 # 시멘트를 없앤다
                             for bar in game.allBars:
                                 if bar.side=="right" and bar.rect.top==230: # 탱크 맨 아래의 시멘트 바를 없앤다
-                                    self.bonus=bar.bonus # change
+                                    self.bonus=bar.bonus ## 보너스 여부 기록
                                     game.allBars.remove(bar)   
-                            # change
-                            if self.bonus:
-                                score.increment=2 # 2점 증가
-                            else:
-                                score.increment=1 # 1점 증가
+                            ## change
+                            if self.bonus: ## 보너스 시멘트면
+                                score.increment=2 ## 2점 증가
+                            else: ## 일반 시멘트면
+                                score.increment=1 ## 1점 증가
                             # Fill the tank above
                             game.play_sound(game.cement_fall) # 시멘트가 떨어지는 효과음
                             for tank in game.allTanks:
@@ -1367,13 +1446,13 @@ class Lever(pygame.sprite.Sprite):
                             tank.t[3]=0 # 시멘트를 없앤다
                             for bar in game.allBars:
                                 if bar.side=="left" and bar.rect.top==315: # 탱크 맨 아래의 시멘트 바를 없앤다
-                                    self.bonus=bar.bonus # change
+                                    self.bonus=bar.bonus ## 보너스 여부 기록
                                     game.allBars.remove(bar)   
-                            # change
-                            if self.bonus:
-                                score.increment=4 # 2점 증가
-                            else:
-                                score.increment=2 # 1점 증가
+                            ## change
+                            if self.bonus: ## 보너스 시멘트면
+                                score.increment=4 ## 4점 증가
+                            else: ## 일반 시멘트면
+                                score.increment=2 ## 2점 증가
                             game.play_sound(game.cement_fall) # 시멘트가 떨어지는 효과음
                             # Cement over the left truck
                             cement=Cement(7,self.bonus) # 아래로 내려보낸다
@@ -1386,13 +1465,13 @@ class Lever(pygame.sprite.Sprite):
                             tank.t[3]=0 # 시멘트를 없앤다
                             for bar in game.allBars:
                                 if bar.side=="right" and bar.rect.top==315: # 탱크 맨 아래의 시멘트 바를 없앤다
-                                    self.bonus=bar.bonus # change
+                                    self.bonus=bar.bonus ## 보너스 여부 기록
                                     game.allBars.remove(bar)   
-                            # change
-                            if self.bonus:
-                                score.increment=4 # 2점 증가
-                            else:
-                                score.increment=2 # 1점 증가
+                            ## change
+                            if self.bonus: ## 보너스 시멘트면
+                                score.increment=4 ## 4점 증가
+                            else: ## 일반 시멘트면
+                                score.increment=2 ## 2점 증가
                             game.play_sound(game.cement_fall) # 시멘트가 떨어지는 효과음
                             # Cement over the truck
                             cement=Cement(8,self.bonus) # 아래로 내려보낸다
@@ -1412,26 +1491,26 @@ class Cement(pygame.sprite.Sprite):
         self.num=num
         self.bonus=bonus
         
-        # change
+        ## change
         # Cement over the left Truck
         # 왼쪽 화물차에 시멘트가 떨어진다
         if self.num==7:
-            if bonus: # 보너스 시멘트
-                self.image=game.ciment5 # 이미지 설정
-            else: # 일반 시멘트
-                self.image=game.ciment4 # 이미지 설정
+            if bonus: ## 보너스 시멘트
+                self.image=game.ciment5 ## 이미지 설정
+            else: ## 일반 시멘트
+                self.image=game.ciment4 ## 이미지 설정
             self.rect=self.image.get_rect()
             self.rect.left=45 # 위치 설정
             self.rect.top=350
             
-        # change
+        ## change
         # Cement over the right Truck
         # 오른쪽 화물차에 시멘트가 떨어진다
         elif self.num==8:
-            if bonus: # 보너스 시멘트
-                self.image=game.ciment5 # 이미지 설정
-            else: # 일반 시멘트
-                self.image=game.ciment4 # 이미지 설정
+            if bonus: ## 보너스 시멘트
+                self.image=game.ciment5 ## 이미지 설정
+            else: ## 일반 시멘트
+                self.image=game.ciment4 ## 이미지 설정
             self.rect=self.image.get_rect()
             self.rect.left=565 # 위치 설정
             self.rect.top=350   
@@ -1509,8 +1588,8 @@ class Score:
         self.laps=0 # 경과 시간
         self.clock=pygame.time.Clock()
         self.increment=0 # 추가할 점수
-        self.fix1 = 0 # change
-        self.fix2 = 0 # change
+        self.fix1 = 0 ## change
+        self.fix2 = 0 ## change
         
     def update(self):
     # laver에서 설정한 increment에 따라서 점수를 증가시킨다
@@ -1523,8 +1602,8 @@ class Score:
                 self.point+=1*self.inc # 1점 증가
                 self.compute() # 위치를 계산해 화면으로 출력
                 self.increment=0 # increment를 0으로 변경
-                self.fix1 = 1 # change
-                self.fix2 = 1 # change
+                self.fix1 = 1 ## change
+                self.fix2 = 1 ## change
                 
             elif self.increment==2: # 2점 증가.1
                 # Addint point immediat
@@ -1532,8 +1611,8 @@ class Score:
                 self.compute() # 위치를 계산해 화면으로 출력
                 self.laps=0 # 시간 초기화
                 self.increment=3 # increment를 3으로 변경
-                self.fix1 = 1 # change
-                self.fix2 = 1 # change
+                self.fix1 = 1 ## change
+                self.fix2 = 1 ## change
 
             elif self.increment==3: # 2점 증가.2
                 # Wait 200 msecond before adding the next point
@@ -1542,60 +1621,60 @@ class Score:
                      self.point+=1*self.inc # 1점 다시 증가 >> 총 2점 증가
                      self.compute() # 위치를 계산해 화면으로 출력
                      self.increment=0 # increment를 0으로 변경
-                     self.fix1 = 1 # change
-                     self.fix2 = 1 # change
+                     self.fix1 = 1 ## change
+                     self.fix2 = 1 ## change
 
-            # change
+            ## change
             elif self.increment==4: # 4점 증가.1
                 # Addint point immediat
                 self.point+=1*self.inc # 먼저 1점 증가
                 self.compute() # 위치를 계산해 화면으로 출력
                 self.laps=0 # 시간 초기화
                 self.increment=5 # increment를 5로 변경
-                self.fix1 = 1 # change
-                self.fix2 = 1 # change
+                self.fix1 = 1 ## change
+                self.fix2 = 1 ## change
 
-            # change
+            ## change
             elif self.increment==5: # 4점 증가.2
                 self.laps+=self.clock.get_time()
                 if self.laps>150: # 150ms후에 점수 증가
                      self.point+=1*self.inc # 1점 다시 증가 >> 총 2점 증가
                      self.compute() # 위치를 계산해 화면으로 출력
                      self.increment=6 # increment를 6으로 변경
-                     self.fix1 = 1 # change
-                     self.fix2 = 1 # change
+                     self.fix1 = 1 ## change
+                     self.fix2 = 1 ## change
 
-            # change
+            ## change
             elif self.increment==6: # 4점 증가.3
                 self.laps+=self.clock.get_time()
                 if self.laps>300: # 300ms후에 점수 증가
                      self.point+=1*self.inc # 1점 다시 증가 >> 총 3점 증가
                      self.compute() # 위치를 계산해 화면으로 출력
                      self.increment=7 # increment를 7로 변경
-                     self.fix1 = 1 # change
-                     self.fix2 = 1 # change
-            # change
+                     self.fix1 = 1 ## change
+                     self.fix2 = 1 ## change
+            ## change
             elif self.increment==7: # 4점 증가.4
                 self.laps+=self.clock.get_time()
                 if self.laps>450: # 450ms후에 점수 증가
                      self.point+=1*self.inc # 1점 다시 증가 >> 총 4점 증가
                      self.compute() # 위치를 계산해 화면으로 출력
                      self.increment=0 # increment를 0으로 변경
-                     self.fix1 = 1 # change
-                     self.fix2 = 1 # change
+                     self.fix1 = 1 ## change
+                     self.fix2 = 1 ## change
                      
             elif self.increment==0: # increment가 0이면
                 self.laps=0 # 시간 초기화
 
-           # change
-            if self.point % 5 == 0 and self.fix1: # 5점을 얻을 때 마다 속도가 빨라진다  
-                game.speed -= 250 # change
-                self.fix1 = 0 # change
+           ## change
+            if self.point % 5 == 0 and self.fix1: ## 5점을 얻을 때 마다 속도가 빨라진다  
+                game.speed -= 250 ## 250씩 증가
+                self.fix1 = 0 ## change
 
-            # change
-            if self.point % 10 == 0 and self.fix2: # 10점을 얻을 때 마다 축하 메세지를 출력한다
-                self.celebrate() # 축하메세지 출력
-                self.fix2 = 0 # change
+            ## change
+            if self.point % 10 == 0 and self.fix2: ## 10점을 얻을 때 마다 축하 메세지를 출력한다
+                self.celebrate() ## 축하메세지 출력
+                self.fix2 = 0 ## change
 
             # Double point if 200 points is reached without lose a life
             # miss를 발생시키지 않고 200점을 넘으면 점수를 두배로 얻는다
@@ -1619,14 +1698,15 @@ class Score:
                 self.rect=self.rect.move(-200,70)
                 game.surface.blit(game.bg,game.bg.get_rect())
 
-    # change
-    def celebrate(self): # 축하 메세지를
-        info=Information("congratulations!",100,200,3,RED) # 축하 메세지
+    ## change
+    def celebrate(self): ## 축하 메세지를 출력하는 클래스
+
+        info=Information("congratulations!",100,200,3,RED) ## 축하 메세지
         game.allTexts.add(info) # 축하 메세지
-        game.allTexts.clear(game.surface,game.bg) # 메세지 그리기
-        game.allTexts.draw(game.surface) # 화면에 출력
-        pygame.display.update() # 화면 업데이트 
-        pygame.time.wait(300)
+        game.allTexts.clear(game.surface,game.bg) ## 메세지 그리기
+        game.allTexts.draw(game.surface) ## 화면에 출력
+        pygame.display.update() ## 화면 업데이트 
+        pygame.time.wait(300) ## 300ms동안 출력
         info.kill()
 
         info=Information("congratulations!",100,200,3,ORANGE) # 축하 메세지
@@ -1634,7 +1714,7 @@ class Score:
         game.allTexts.clear(game.surface,game.bg) # 메세지 그리기
         game.allTexts.draw(game.surface) # 화면에 출력
         pygame.display.update() # 화면 업데이트 
-        pygame.time.wait(300)
+        pygame.time.wait(300) ## 300ms동안 출력
         info.kill()
 
         info=Information("congratulations!",100,200,3,YELLOW) # 축하 메세지
@@ -1642,7 +1722,7 @@ class Score:
         game.allTexts.clear(game.surface,game.bg) # 메세지 그리기
         game.allTexts.draw(game.surface) # 화면에 출력
         pygame.display.update() # 화면 업데이트 
-        pygame.time.wait(300)
+        pygame.time.wait(300) ## 300ms동안 출력
         info.kill()
 
         info=Information("you get the score " + str(self.point),100,200,3,GREEN) # 축하 메세지
@@ -1650,7 +1730,7 @@ class Score:
         game.allTexts.clear(game.surface,game.bg) # 메세지 그리기
         game.allTexts.draw(game.surface) # 화면에 출력
         pygame.display.update() # 화면 업데이트 
-        pygame.time.wait(300)
+        pygame.time.wait(300) ## 300ms동안 출력
         info.kill()
 
         info=Information("you get the score " + str(self.point),100,200,3,BLUE) # 축하 메세지
@@ -1658,7 +1738,7 @@ class Score:
         game.allTexts.clear(game.surface,game.bg) # 메세지 그리기
         game.allTexts.draw(game.surface) # 화면에 출력
         pygame.display.update() # 화면 업데이트 
-        pygame.time.wait(300)
+        pygame.time.wait(300) ## 300ms동안 출력
         info.kill()
 
         info=Information("you get the score " + str(self.point),100,200,3,BLACK) # 축하 메세지
@@ -1666,7 +1746,7 @@ class Score:
         game.allTexts.clear(game.surface,game.bg) # 메세지 그리기
         game.allTexts.draw(game.surface) # 화면에 출력
         pygame.display.update() # 화면 업데이트 
-        pygame.time.wait(300)
+        pygame.time.wait(300) ## 300ms동안 출력
         info.kill()
 
         info=Information("you get the score " + str(self.point),100,200,3,GREY) # 축하 메세지
@@ -1674,7 +1754,7 @@ class Score:
         game.allTexts.clear(game.surface,game.bg) # 메세지 그리기
         game.allTexts.draw(game.surface) # 화면에 출력
         pygame.display.update() # 화면 업데이트 
-        pygame.time.wait(300)
+        pygame.time.wait(300) ## 300ms동안 출력
         info.kill()
 
  
@@ -1738,7 +1818,7 @@ if __name__ == '__main__':
     
     while not events_handle(): # 이벤트가 발생하는 동안
         while not events_handle() and mario.life!=0: # 생명이 남아있는 동안 
-            print (game.speed)
+            # print (game.speed)
             if game.stop==False: # 멈추지 않는다
                                 
                 # Elevator at right is created afer 800 milliseconds
@@ -1772,6 +1852,10 @@ if __name__ == '__main__':
                 game.allCements.draw(game.surface) # 시멘트 출력
                 game.allCements.update() # 시멘트의 상태 변화
                 
+                game.allHearts.clear(game.surface,game.bg) # heart 아이템을 그린다
+                game.allHearts.draw(game.surface) # 화면에 출력
+                game.allHearts.update() # life 아이템의 상태변화
+                
                 game.allBacs.clear(game.surface,game.bg) # bac을 그린다
                 game.allBacs.draw(game.surface) # bac을 화면에 출력
                 
@@ -1786,6 +1870,7 @@ if __name__ == '__main__':
                 
                 game.allMiss.clear(game.surface,game.bg) # miss를 그린다
                 game.allMiss.draw(game.surface) # 화면에 출력
+
                 
                 # Moves all the  objects only if Mario is not falling down
                 # 모든 물체는 마리오가 떨어지지 않았을때만 움직인다
