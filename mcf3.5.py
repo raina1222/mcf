@@ -697,6 +697,7 @@ class Bac(pygame.sprite.Sprite):
         # 200-275 : 2 CHANCE SUR 3
         # 275-300 : 3 SUR 3
         
+        #self.full=1
         self.full=randint(0,1) # 0또는 1 랜덤으로 발생(0: empty/ 1: full)       
         self.side=side # 오른쪽 왼쪽
 
@@ -974,8 +975,19 @@ class Tank(pygame.sprite.Sprite):
             # self.t = [1,1,1,1] < tank full && cement가 또 떨어지는 상황
             #---------------------------------------
             else:
+                ## change
+                if self.pos=="NO" or self.pos=="NE": ## 위층 탱크
+                    for obj in game.allBars:
+                        if obj.rect.top==175 and obj.side==self.side: ## 탱크로 떨어지는 시멘트
+                            obj.kill() ## 삭제
+
+                elif self.pos=="SO" or self.pos=="SE": ## 아래층 탱크
+                    for obj in game.allBars:
+                        if obj.rect.top==265 and obj.side==self.side: ## 탱크로 떨어지는 시멘트
+                            obj.kill() ## 삭제
+
                 game.stop=True # 게임을 멈춘다
-                
+               
                 #---------------------------------------
                 # Update the driver
                 #---------------------------------------
@@ -1101,9 +1113,7 @@ class Elevator(pygame.sprite.Sprite):
         game.play_sound(game.elevator_move) # 엘레베이터가 움직이는 효과음
 
         ## change
-        #self.heart=1
-        self.heart=randint(0,5) ## 1/6 확율로 heart 아이템 생성
-        if self.heart==1:
+        if randint(0,6)==1: ## 1/7 확율로 heart 아이템 생성
             heart=Heart(self.x,self.side,self.count) ## heart 아이템 생성
         
     def update(self):
@@ -1893,6 +1903,8 @@ if __name__ == '__main__':
             game.allDrivers.clear(game.surface,game.bg) # 운전자 그리기
             game.allDrivers.draw(game.surface) # 화면에 출력
             game.allDrivers.update() # 상태 변화
+            game.allBars.clear(game.surface,game.bg) # 시멘트 바를 그린다
+            game.allBars.draw(game.surface) # 화면에 출력
             # Elevators are updated but they are not moving in order to preserve theirs life time...
             game.allElevators.update() # 엘레베이터의 상태 변화
             pygame.display.update() # 화면 업데이트
