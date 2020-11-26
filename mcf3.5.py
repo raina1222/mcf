@@ -56,7 +56,7 @@ def events_handle():
                     mouse = pygame.mouse.get_pos() ## 마우스의 좌표를 가져온다
                     for obj in game.allBtns: ## 모든 버튼중에서
                         if obj.pressed(mouse): ## 클릭한 버튼을 찾는다
-                            print(obj.index) ## 어느 버튼을 클릭했는지 출력
+                            obj.action() ## 지정된 기능을 수행한다
 
         if event.type == pygame.KEYDOWN: # 키보드를 누르는 이벤트
             if event.key==pygame.K_ESCAPE: # esc
@@ -171,6 +171,7 @@ class Game():
     
     def __init__(self,size=(640,480)):
         pygame.mixer.set_num_channels(20) # 채널을 20개로 변경
+        self.sound=1 ## 음소거 여부 (1:사운드 재생, 0:음소거)
         self.size=size
         self.surface=pygame.display.set_mode(self.size,0) # 화면에 나타낼 창
         self.surface.fill(BLACK)
@@ -305,7 +306,7 @@ class Game():
         # Load Heart
         #-----------------------------------------------
         ## change
-        self.heart00=pygame.image.load("./graph/heart00.png")
+        self.heart00=pygame.image.load("./graph/heart.png")
         self.heart01=pygame.transform.scale(self.heart00, (30,25))
         
         self.allHearts=pygame.sprite.RenderUpdates()
@@ -391,7 +392,9 @@ class Game():
         while canal is None:
             chanel+=1
             canal=pygame.mixer.find_channel(chanel)
-        canal.play(sound,loop)
+        
+        if game.sound: ## 음소거를 설정하지 않았으면
+            canal.play(sound,loop) ## 사운드 재생
             
     def reset(self): # 마리오의 모든 이미지를 그린다
         mario.beta(0)
@@ -412,7 +415,7 @@ class Game():
 
 ## change
 class Button(pygame.sprite.Sprite):
-    def __init__(self,index,x,y,action=None):
+    def __init__(self,index,x,y):
         pygame.sprite.Sprite.__init__(self)
         self.image=game.btn[index] ## 이미지 지정
         self.rect=self.image.get_rect()
@@ -428,11 +431,29 @@ class Button(pygame.sprite.Sprite):
         if self.x+self.w > mouse[0] > self.x and self.y+self.h > mouse[1] > self.y:
             return True
 
-    
+    def action(self):
+        if self.index==0:
+            print("hi")
 
-def hello(s):
-    print(hello)
-    print(s)
+        elif self.index==1:
+            self.index=2
+            self.image=game.btn[self.index]
+            self.rect.left=53
+            self.rect.top=60
+            self.w=self.image.get_width() ## 이미지 넓이
+            self.h=self.image.get_height() ## 이미지 높이
+            game.sound=0
+        
+        elif self.index==2:
+            self.index=1
+            self.image=game.btn[self.index]
+            self.rect.left=50
+            self.rect.top=55
+            self.w=self.image.get_width() ## 이미지 넓이
+            self.h=self.image.get_height() ## 이미지 높이
+            game.sound=1
+
+
 
 class Mario(pygame.sprite.Sprite):
     
@@ -1163,8 +1184,8 @@ class Elevator(pygame.sprite.Sprite):
         game.play_sound(game.elevator_move) # 엘레베이터가 움직이는 효과음
 
         ## change
-        self.heart=1
-        #self.heart=randint(0,6) ## 1/7 확율로 heart 아이템 생성
+        #self.heart=1
+        self.heart=randint(0,6) ## 1/7 확율로 heart 아이템 생성
         if self.heart==1:
             heart=Heart(self.x,self.side,self.count) ## heart 아이템 생성
         
@@ -1825,16 +1846,12 @@ if __name__ == '__main__':
     game=Game()
     score=Score()
 
-    h=hello
-
-    btn1=Button(0,10,60,h)
-    btn2=Button(1,50,55,h)
-    btn3=Button(2,95,60,h)
-    btn4=Button(3,260,200)
+    btn1=Button(0,10,60)
+    btn2=Button(1,50,55)
+    btn3=Button(3,260,200)
     game.allBtns.add(btn1)
     game.allBtns.add(btn2)
-    game.allBtns.add(btn3)
-    game.allBtns.add(btn4)
+    #game.allBtns.add(btn3)
     
     # Mario
     mario=Mario()
