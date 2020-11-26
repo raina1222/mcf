@@ -51,6 +51,13 @@ def events_handle():
     #for event in pygame.event.get():
     event=pygame.event.poll() # 대기열에서 하나의 단일 이벤트를 가져온다 
     if game.stop==False: # 게임이 실행중이라면
+        ## change
+        if event.type == pygame.MOUSEBUTTONDOWN: ## 마우스를 누르는 이벤트
+                    mouse = pygame.mouse.get_pos() ## 마우스의 좌표를 가져온다
+                    for obj in game.allBtns: ## 모든 버튼중에서
+                        if obj.pressed(mouse): ## 클릭한 버튼을 찾는다
+                            print(obj.index) ## 어느 버튼을 클릭했는지 출력
+
         if event.type == pygame.KEYDOWN: # 키보드를 누르는 이벤트
             if event.key==pygame.K_ESCAPE: # esc
                 ret=True # 종료를 알린다
@@ -403,15 +410,29 @@ class Game():
             game.allDrivers.update()
         '''
 
+## change
 class Button(pygame.sprite.Sprite):
-    def __init__(self,index,x,y,):
+    def __init__(self,index,x,y,action=None):
         pygame.sprite.Sprite.__init__(self)
-        self.image=game.btn[index]
+        self.image=game.btn[index] ## 이미지 지정
         self.rect=self.image.get_rect()
-        self.rect.left=x
-        self.rect.top=y
-        self.width=self.image.get_width()
-        self.height=self.image.get_height()
+        self.index=index ## 이미지 지정을 위한 인덱스
+        self.x=x ## x좌표
+        self.y=y ## y좌표
+        self.rect.left=x ## x좌표 위치 설정
+        self.rect.top=y ##y좌표 위치 설정
+        self.w=self.image.get_width() ## 이미지 넓이
+        self.h=self.image.get_height() ## 이미지 높이
+
+    def pressed(self,mouse): ## 버튼을 클릭했는지 알아보는 함수
+        if self.x+self.w > mouse[0] > self.x and self.y+self.h > mouse[1] > self.y:
+            return True
+
+    
+
+def hello(s):
+    print(hello)
+    print(s)
 
 class Mario(pygame.sprite.Sprite):
     
@@ -1142,8 +1163,8 @@ class Elevator(pygame.sprite.Sprite):
         game.play_sound(game.elevator_move) # 엘레베이터가 움직이는 효과음
 
         ## change
-        #self.heart=1
-        self.heart=randint(0,6) ## 1/7 확율로 heart 아이템 생성
+        self.heart=1
+        #self.heart=randint(0,6) ## 1/7 확율로 heart 아이템 생성
         if self.heart==1:
             heart=Heart(self.x,self.side,self.count) ## heart 아이템 생성
         
@@ -1685,7 +1706,7 @@ class Score:
                      self.fix1 = 1 ## change
                      self.fix2 = 1 ## change
 
-            ## change
+            ## changecl
             elif self.increment==6: # 4점 증가.3
                 self.laps+=self.clock.get_time()
                 if self.laps>300: # 300ms후에 점수 증가
@@ -1804,9 +1825,11 @@ if __name__ == '__main__':
     game=Game()
     score=Score()
 
-    btn1=Button(0,10,60)
-    btn2=Button(1,50,55)
-    btn3=Button(2,95,60)
+    h=hello
+
+    btn1=Button(0,10,60,h)
+    btn2=Button(1,50,55,h)
+    btn3=Button(2,95,60,h)
     btn4=Button(3,260,200)
     game.allBtns.add(btn1)
     game.allBtns.add(btn2)
