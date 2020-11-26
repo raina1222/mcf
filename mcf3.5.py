@@ -328,7 +328,12 @@ class Game():
         self.btn[3]=pygame.transform.scale(self.b03, (120,120))
         
         self.allBtns=pygame.sprite.RenderUpdates()
-        
+
+        #-----------------------------------------------
+        # Load Informaion
+        #-----------------------------------------------
+        self.info=pygame.image.load("./graph/information.png")
+
         #-----------------------------------------------
         # Load the sounds
         #-----------------------------------------------
@@ -425,20 +430,25 @@ class Button(pygame.sprite.Sprite):
         self.rect.left=x ## x좌표 위치 설정
         self.rect.top=y ##y좌표 위치 설정
         self.w=self.image.get_width() ## 이미지 넓이
-        self.h=self.image.get_height() ## 이미지 높이
+        self.h=self.image.get_height() ## 이미지 높이=
 
     def pressed(self,mouse): ## 버튼을 클릭했는지 알아보는 함수
         if self.x+self.w > mouse[0] > self.x and self.y+self.h > mouse[1] > self.y:
             return True
 
     def action(self):
+        
         if self.index==0:
-            print("hi")
+            game.surface.blit(game.info,(140, 100)) ## 게임 설명을 띄운다
+            pygame.display.update() ## 화면에 출력
+            wait(4000) ## 4초 동안 띄운다
+            game.surface.blit(game.bg,game.bg.get_rect())
+
 
         elif self.index==1:
             self.index=2
-            self.image=game.btn[self.index]
-            self.rect.left=53
+            self.image=game.btn[self.index] ## 음소거 이미지로 변경
+            self.rect.left=53 ## 위치 재설정
             self.rect.top=60
             self.w=self.image.get_width() ## 이미지 넓이
             self.h=self.image.get_height() ## 이미지 높이
@@ -446,8 +456,8 @@ class Button(pygame.sprite.Sprite):
         
         elif self.index==2:
             self.index=1
-            self.image=game.btn[self.index]
-            self.rect.left=50
+            self.image=game.btn[self.index] ## 사운드 재생 이미지로 변경
+            self.rect.left=50 ## 위치 재설정
             self.rect.top=55
             self.w=self.image.get_width() ## 이미지 넓이
             self.h=self.image.get_height() ## 이미지 높이
