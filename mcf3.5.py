@@ -294,11 +294,11 @@ class Game():
         #-----------------------------------------------
         ## change
         self.ciment0=pygame.image.load("./graph/ciment00.png") # 탱크로 떨어지는 시멘트
-        self.ciment1=pygame.image.load("./graph/ciment01.png") # 탱크로 떨어지는 보너스 시멘트
+        self.ciment1=pygame.image.load("./graph/ciment01.png") ## 탱크로 떨어지는 보너스 시멘트
         self.ciment2=pygame.image.load("./graph/ciment02.png") # 탱크안의 시멘트
-        self.ciment3=pygame.image.load("./graph/ciment03.png") # 탱크안의 보너스 시멘트
+        self.ciment3=pygame.image.load("./graph/ciment03.png") ## 탱크안의 보너스 시멘트
         self.ciment4=pygame.image.load("./graph/ciment04.png") # 트럭에 떨어지는 시멘트
-        self.ciment5=pygame.image.load("./graph/ciment05.png") # 트럭에 떨어지는 보너스 시멘트
+        self.ciment5=pygame.image.load("./graph/ciment05.png") ## 트럭에 떨어지는 보너스 시멘트
 
         
         #-----------------------------------------------
@@ -438,7 +438,7 @@ class Button(pygame.sprite.Sprite):
         self.x=x ## x좌표
         self.y=y ## y좌표
         self.rect.left=x ## x좌표 위치 설정
-        self.rect.top=y ##y좌표 위치 설정
+        self.rect.top=y ## y좌표 위치 설정
         self.w=self.image.get_width() ## 이미지 넓이
         self.h=self.image.get_height() ## 이미지 높이
 
@@ -492,8 +492,7 @@ class Button(pygame.sprite.Sprite):
                 obj.t=[0,0,0,0]
             for obj in game.allTexts: ## 화면에 출력된 문자 삭제
                 obj.kill()
-            
-            
+                      
             ## 마리오의 정보를 초기화한다
             mario.image=game.mario[13] ## 시작 이미지
             mario.rect=mario.image.get_rect()
@@ -511,7 +510,7 @@ class Button(pygame.sprite.Sprite):
             
             self.kill() ## 버튼 삭제
             main() ## 다시 시작
-            exit()
+            exit() ## 종료
 
 class Mario(pygame.sprite.Sprite):
     
@@ -785,7 +784,7 @@ class Miss(pygame.sprite.Sprite): # miss아이콘
     def __init__(self,index):
         pygame.sprite.Sprite.__init__(self)
         self.index=index
-        self.image=game.miss[index] # miss 이미지 배열(line242) 
+        self.image=game.miss[index] # miss 이미지 배열
         self.rect=self.image.get_rect()
         if index==2: # 각 이미지에 대한 위치 설정
             self.rect=self.rect.move(595,70) # 1 miss
@@ -804,7 +803,7 @@ class Information(pygame.sprite.Sprite):
             self.font=pygame.font.Font("./font/Digirtu_.ttf",18)
         elif fontIndex == 2:
             self.font=pygame.font.Font("./font/DejaVuSansCondensed-Bold.ttf",16)
-        elif fontIndex == 3:
+        elif fontIndex == 3: ## change
             self.font=pygame.font.Font("./font/DejaVuSansCondensed-Bold.ttf",45)   
         self.font.set_bold(True) # bold
         self.image=self.font.render(text1,1,color) # 화면에 출력
@@ -1036,7 +1035,7 @@ class Tank(pygame.sprite.Sprite):
                                 # [1]위치의 바를 삭제
                                 for obj in game.allBars:
                                     if obj.rect.top==200 and obj.side==self.side:
-                                        self.bonus=obj.bonus # 보너스 여부를 기록
+                                        self.bonus=obj.bonus ## 보너스 여부를 기록
                                         obj.kill()
                                 # Create the new bar in the pos 2
                                 bar=Bar(215,self.bonus,self.side) # [2]의 위치에 시멘트 바를 생성한다
@@ -1047,7 +1046,7 @@ class Tank(pygame.sprite.Sprite):
                                 # [2]위치의 바를 삭제
                                 for obj in game.allBars:
                                     if obj.rect.top==215 and obj.side==self.side:
-                                        self.bonus=obj.bonus # 보너스 여부를 기록
+                                        self.bonus=obj.bonus ## 보너스 여부를 기록
                                         obj.kill()
                                 # Create the new bar in the pos 3. This is the last pos of the tank
                                 bar=Bar(230,self.bonus,self.side) # [3]의 위치에 시멘트 바를 생성한다
@@ -1062,7 +1061,7 @@ class Tank(pygame.sprite.Sprite):
                                 # [0]위치의 바를 삭제
                                 for obj in game.allBars:
                                     if obj.rect.top==265 and obj.side==self.side:
-                                        self.bonus=obj.bonus # 보너스 여부를 기록
+                                        self.bonus=obj.bonus ## 보너스 여부를 기록
                                         obj.kill()
                                 # Create the new bar in the pos 1 
                                 bar=Bar(285,self.bonus,self.side) # [1]의 위치에 시멘트 바를 생성한다
@@ -1073,7 +1072,7 @@ class Tank(pygame.sprite.Sprite):
                                 # [1]위치의 바를 삭제
                                 for obj in game.allBars:
                                     if obj.rect.top==285 and obj.side==self.side:
-                                        self.bonus=obj.bonus # 보너스 여부를 기록
+                                        self.bonus=obj.bonus ## 보너스 여부를 기록
                                         obj.kill()
                                 # Create the new bar in the pos 2
                                 bar=Bar(300,self.bonus,self.side) # [2]의 위치에 시멘트 바를 생성한다
@@ -1084,7 +1083,7 @@ class Tank(pygame.sprite.Sprite):
                                 # [2]위치의 바를 삭제
                                 for obj in game.allBars:
                                     if obj.rect.top==300 and obj.side==self.side:
-                                        self.bonus=obj.bonus # 보너스 여부를 기록
+                                        self.bonus=obj.bonus ## 보너스 여부를 기록
                                         obj.kill()
                                 # Create the new bar in the pos 3. This is the last pos of the tank
                                 bar=Bar(315,self.bonus,self.side) # [3]의 위치에 시멘트 바를 생성한다
@@ -1900,6 +1899,7 @@ class Score:
         pygame.time.wait(300) ## 300ms동안 출력
         info.kill()
 
+## change
 def main():
     info=Information("Game A",420,70,1) # 문자열 화면에 출력
     game.allTexts.add(info)
@@ -1908,7 +1908,7 @@ def main():
 
     while not events_handle(): # 이벤트가 발생하는 동안
         while not events_handle() and mario.life!=0: # 생명이 남아있는 동안 
-            print (game.speed)
+            #print (game.speed)
             if game.stop==False: # 멈추지 않는다
                                 
                 # Elevator at right is created afer 800 milliseconds
