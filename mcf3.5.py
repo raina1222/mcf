@@ -153,8 +153,18 @@ def events_handle():
             elif  event.key == pygame.K_RIGHT: # 오른쪽 화살표
                 mario.update(1) # 오른쪽으로 이동
 
+    else: ## 게임이 멈춘경우
+        ## 다시시작 버튼을 누르는 경우를 인식하기위한 코드
+        if event.type == pygame.MOUSEBUTTONDOWN: ## 마우스를 누르는 이벤트
+                        mouse = pygame.mouse.get_pos() ## 마우스의 좌표를 가져온다
+                        for obj in game.allBtns: ## 모든 버튼중에서
+                            if obj.pressed(mouse): ## 클릭한 버튼을 찾는다
+                                obj.action() ## 지정된 기능을 수행한다
+
     #윈도우 창의 x버튼을 누르거나 esc를 누른경우 게임 종료
-    if event.type==pygame.QUIT or (event.type==pygame.KEYDOWN and event.key==pygame.K_ESCAPE):ret=True
+    if event.type==pygame.QUIT or (event.type==pygame.KEYDOWN and event.key==pygame.K_ESCAPE):
+        ret=True
+
     return ret
 
 def wait(time):
@@ -438,32 +448,32 @@ class Button(pygame.sprite.Sprite):
 
     def action(self):
         
-        if self.index==0:
+        if self.index==0: ## info 버튼
             game.surface.blit(game.info,(140, 100)) ## 게임 설명을 띄운다
             pygame.display.update() ## 화면에 출력
-            wait(4000) ## 4초 동안 띄운다
-            game.surface.blit(game.bg,game.bg.get_rect())
+            wait(3000) ## 4초 동안 띄운다
+            game.surface.blit(game.bg,game.bg.get_rect()) ## 원래의 배경으로 되돌린다
 
-
-        elif self.index==1:
+        elif self.index==1: ## on 버튼
             self.index=2
             self.image=game.btn[self.index] ## 음소거 이미지로 변경
             self.rect.left=53 ## 위치 재설정
             self.rect.top=60
             self.w=self.image.get_width() ## 이미지 넓이
             self.h=self.image.get_height() ## 이미지 높이
-            game.sound=0
+            game.sound=0 ## 음소거 설정
         
-        elif self.index==2:
+        elif self.index==2: ## mute 버튼
             self.index=1
             self.image=game.btn[self.index] ## 사운드 재생 이미지로 변경
             self.rect.left=50 ## 위치 재설정
             self.rect.top=55
             self.w=self.image.get_width() ## 이미지 넓이
             self.h=self.image.get_height() ## 이미지 높이
-            game.sound=1
+            game.sound=1 ## 음소거 해제
 
-
+        elif self.index==3: ## 다시시작 버튼
+            print("hi")
 
 class Mario(pygame.sprite.Sprite):
     
@@ -1856,12 +1866,12 @@ if __name__ == '__main__':
     game=Game()
     score=Score()
 
-    btn1=Button(0,10,60)
-    btn2=Button(1,50,55)
-    btn3=Button(3,260,200)
+    ## change
+    btn1=Button(0,10,60) ## 게임설명
+    btn2=Button(1,50,55) ## 음소거
+    btn3=Button(3,260,200) ## 게임 다시시작
     game.allBtns.add(btn1)
     game.allBtns.add(btn2)
-    #game.allBtns.add(btn3)
     
     # Mario
     mario=Mario()
@@ -1940,9 +1950,9 @@ if __name__ == '__main__':
                 game.allLevers.draw(game.surface) # 레버를 화면에 출력
                 game.allLevers.update() # 레버의 상태 변화
                 
-                game.allHearts.clear(game.surface,game.bg) # heart 아이템을 그린다
-                game.allHearts.draw(game.surface) # 화면에 출력
-                game.allHearts.update() # life 아이템의 상태변화
+                game.allHearts.clear(game.surface,game.bg) ## heart 아이템을 그린다
+                game.allHearts.draw(game.surface) ## 화면에 출력
+                game.allHearts.update() ## heart 아이템의 상태변화
                 
                 game.Mario.clear(game.surface,game.bg) # 마리오를 그린다
                 game.Mario.draw(game.surface) # 마리오를 화면에 출력
@@ -1956,8 +1966,8 @@ if __name__ == '__main__':
                 game.allCements.draw(game.surface) # 시멘트 출력
                 game.allCements.update() # 시멘트의 상태 변화
                 
-                game.allBtns.clear(game.surface,game.bg) # bac을 그린다
-                game.allBtns.draw(game.surface) # bac을 화면에 출력
+                game.allBtns.clear(game.surface,game.bg) ## 버튼을 그린다
+                game.allBtns.draw(game.surface) ## 버튼을 화면에 출력
                 
                 game.allBacs.clear(game.surface,game.bg) # bac을 그린다
                 game.allBacs.draw(game.surface) # bac을 화면에 출력
@@ -2008,6 +2018,9 @@ if __name__ == '__main__':
             game.allTexts.add(info) # 게임오버 메세지
             game.allTexts.clear(game.surface,game.bg) # 메세지 그리기
             game.allTexts.draw(game.surface) # 화면에 출력
+            game.allBtns.add(btn3) ## retry 버튼
+            game.allBtns.clear(game.surface,game.bg) ## 버튼을 그린다
+            game.allBtns.draw(game.surface) ## 버튼을 화면에 출력
             pygame.display.update() # 화면 업데이트 
             pygame.time.wait(150) # 150ms동안 기다린다
         exit() # 종료
