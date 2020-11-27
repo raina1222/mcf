@@ -1059,7 +1059,8 @@ class Tank(pygame.sprite.Sprite):
                         #         obj.kill()
                         # 위층 탱크가 꽉 찬 경우 경고를 울린다
                         if  (self.pos=="NO" or self.pos=="NE") and not pygame.mixer.Channel(0).get_busy():
-                            pygame.mixer.Channel(0).play(game.tank_full)
+                            if game.sound:
+                                pygame.mixer.Channel(0).play(game.tank_full)
 
             #---------------------------------------   
             # Here the tank is overflow
@@ -1400,7 +1401,7 @@ class Driver(pygame.sprite.Sprite):
                 self.image=game.driver[self.image_index[1]] # 머리에 시멘트가 떨어진 이미지
                 self.rect=self.image.get_rect()
                 self.rect=self.rect.move(self.coordinates[0]) # 위치 설정
-                if  not pygame.mixer.Channel(1).get_busy():
+                if  game.sound and not pygame.mixer.Channel(1).get_busy():
                             pygame.mixer.Channel(1).play(game.mario_fall) # 효과음
             elif self.state==1 and self.laps<game.speed:
                 # Driver is Ko
