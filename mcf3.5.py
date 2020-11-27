@@ -440,7 +440,7 @@ class Button(pygame.sprite.Sprite):
         self.rect.left=x ## x좌표 위치 설정
         self.rect.top=y ##y좌표 위치 설정
         self.w=self.image.get_width() ## 이미지 넓이
-        self.h=self.image.get_height() ## 이미지 높이=
+        self.h=self.image.get_height() ## 이미지 높이
 
     def pressed(self,mouse): ## 버튼을 클릭했는지 알아보는 함수
         if self.x+self.w > mouse[0] > self.x and self.y+self.h > mouse[1] > self.y:
@@ -451,7 +451,7 @@ class Button(pygame.sprite.Sprite):
         if self.index==0: ## info 버튼
             game.surface.blit(game.info,(140, 100)) ## 게임 설명을 띄운다
             pygame.display.update() ## 화면에 출력
-            wait(3000) ## 4초 동안 띄운다
+            wait(4000) ## 4초 동안 띄운다
             game.surface.blit(game.bg,game.bg.get_rect()) ## 원래의 배경으로 되돌린다
 
         elif self.index==1: ## on 버튼
@@ -473,7 +473,45 @@ class Button(pygame.sprite.Sprite):
             game.sound=1 ## 음소거 해제
 
         elif self.index==3: ## 다시시작 버튼
-            print("hi")
+            game.stop=False ## 게임 시작
+            mario.life=3 ## 목숨 초기화
+            score.point=0 ## 점수 초기화
+            score.compute() ## 점수 위치 계산
+            game.speed=1500 ## 게임 속도 초기화
+            game.speed_save=1500
+
+            for obj in game.allBars: ## 시멘트 바 삭제
+                obj.kill()
+            for obj in game.allCements: ## 시멘트 삭제
+                obj.kill()
+            for obj in game.allHearts: ## 하트 아이템 삭제
+                obj.kill()
+            for obj in game.allMiss: ## miss 초기화
+                obj.kill()
+            for obj in game.allTanks: ## 탱크 초기화
+                obj.t=[0,0,0,0]
+            for obj in game.allTexts: ## 화면에 출력된 문자 삭제
+                obj.kill()
+            
+            
+            ## 마리오의 정보를 초기화한다
+            mario.image=game.mario[13] ## 시작 이미지
+            mario.rect=mario.image.get_rect()
+            mario.rect.left=130 ## 위치 재설정
+            mario.rect.top=200
+            mario.posx=1 ## 시작 위치
+            mario.posy=3 ## 시작 층
+            mario.fall_left=None ## 떨어지는지 여부
+            mario.fall_right=None
+            mario.ko=False ## 죽었는지
+            mario.laps=0
+            mario.laps2=0
+            mario.blink_state=0 ## 마리오가 깜빡인 수
+            mario.arm_down=False
+            
+            self.kill() ## 버튼 삭제
+            main() ## 다시 시작
+            exit()
 
 class Mario(pygame.sprite.Sprite):
     
@@ -1777,8 +1815,9 @@ class Score:
 
             ## change
             if self.point % 10 == 0 and self.fix2: ## 10점을 얻을 때 마다 축하 메세지를 출력한다
-                self.celebrate() ## 축하메세지 출력
-                self.fix2 = 0 ## change
+                if self.point != 0:
+                    self.celebrate() ## 축하메세지 출력
+                    self.fix2 = 0 ## change
 
             # Double point if 200 points is reached without lose a life
             # miss를 발생시키지 않고 200점을 넘으면 점수를 두배로 얻는다
@@ -1800,7 +1839,7 @@ class Score:
             else: # 네자릿수 이상인 경우
                 self.point=game.point-999
                 self.rect=self.rect.move(-200,70)
-                game.surface.blit(game.bg,game.bg.get_rect())
+            game.surface.blit(game.bg,game.bg.get_rect())
 
     ## change
     def celebrate(self): ## 축하 메세지를 출력하는 클래스
@@ -1861,75 +1900,15 @@ class Score:
         pygame.time.wait(300) ## 300ms동안 출력
         info.kill()
 
- 
-if __name__ == '__main__':
-    environement()
-    game=Game()
-    score=Score()
-
-    ## change
-    btn1=Button(0,10,60) ## 게임설명
-    btn2=Button(1,50,55) ## 음소거
-    btn3=Button(3,260,200) ## 게임 다시시작
-    game.allBtns.add(btn1)
-    game.allBtns.add(btn2)
-    
-    # Mario
-    mario=Mario()
-    game.Mario.add(mario)
-    
-    # The two drivers
-    driver=Driver("left") # 왼쪽 운전자 
-    driver=Driver("right") # 오른쪽 운전자
-    
-    # Elevator left
-    elevator_left=Elevator() # 왼쪽 엘레베이터 생성
-    
-    # The left bac
-    bac=Bac("left") # 왼쪽 bac
-    
-    # The four tank
-    tank1=Tank() # 왼쪽 위(NO)가 default 
-    game.allTanks.add(tank1)
-    tank2=Tank("NE") # 오른쪽 위 탱크
-    game.allTanks.add(tank2)
-    tank3=Tank("SO") # 왼쪽 아래 탱크
-    game.allTanks.add(tank3)
-    tank4=Tank("SE") # 오른쪽 아래 탱크
-    game.allTanks.add(tank4)
-    
-    # The four levers
-    lever01=Lever("NE","up") # 오른쪽 위 레버
-    lever02=Lever("NO","up") # 왼쪽 위 레버
-    lever03=Lever("SE","up") # 오른쪽 아래 레버
-    lever04=Lever("SO","up") # 왼쪽 아래 레버
-    game.allLevers.add(lever01)
-    game.allLevers.add(lever02)
-    game.allLevers.add(lever03)
-    game.allLevers.add(lever04)
-
-    # The four Trap
-    trap01=Trap("NE") # 오른쪽 위 트랩
-    trap02=Trap("NO") # 왼쪽 위 트랩
-    trap03=Trap("SE") # 오른쪽 아래 트랩
-    trap04=Trap("SO") # 왼쪽 아래 트랩
-    game.allTraps.add(trap01)
-    game.allTraps.add(trap02)
-    game.allTraps.add(trap03)
-    game.allTraps.add(trap04)
-
-    #매개변수로 surface객체를 자신에게 그려넣는다
-    # 첫 번째 매개변수가 그려넣을 객체, 두 번째 매개변수가 그려넣을 좌표
-    game.surface.blit(game.bg,game.bg.get_rect()) # 배경을 그려넣는다
-    
+def main():
     info=Information("Game A",420,70,1) # 문자열 화면에 출력
     game.allTexts.add(info)
     info=Information("Mario Cement Factory by space.max@free.fr",150,5,2,WHITE) # 문자열 화면에 출력
     game.allTexts.add(info)
-    
+
     while not events_handle(): # 이벤트가 발생하는 동안
         while not events_handle() and mario.life!=0: # 생명이 남아있는 동안 
-            # print (game.speed)
+            print (game.speed)
             if game.stop==False: # 멈추지 않는다
                                 
                 # Elevator at right is created afer 800 milliseconds
@@ -2024,4 +2003,67 @@ if __name__ == '__main__':
             game.allBtns.draw(game.surface) ## 버튼을 화면에 출력
             pygame.display.update() # 화면 업데이트 
             pygame.time.wait(150) # 150ms동안 기다린다
-        exit() # 종료
+        return
+ 
+if __name__ == '__main__':
+    environement()
+    game=Game()
+    score=Score()
+
+    ## change
+    btn1=Button(0,10,60) ## 게임설명
+    btn2=Button(1,50,55) ## 음소거
+    btn3=Button(3,260,200) ## 게임 다시시작
+    game.allBtns.add(btn1)
+    game.allBtns.add(btn2)
+    
+    # Mario
+    mario=Mario()
+    game.Mario.add(mario)
+    
+    # The two drivers
+    driver=Driver("left") # 왼쪽 운전자 
+    driver=Driver("right") # 오른쪽 운전자
+    
+    # Elevator left
+    elevator_left=Elevator() # 왼쪽 엘레베이터 생성
+    
+    # The left bac
+    bac=Bac("left") # 왼쪽 bac
+    
+    # The four tank
+    tank1=Tank() # 왼쪽 위(NO)가 default 
+    game.allTanks.add(tank1)
+    tank2=Tank("NE") # 오른쪽 위 탱크
+    game.allTanks.add(tank2)
+    tank3=Tank("SO") # 왼쪽 아래 탱크
+    game.allTanks.add(tank3)
+    tank4=Tank("SE") # 오른쪽 아래 탱크
+    game.allTanks.add(tank4)
+    
+    # The four levers
+    lever01=Lever("NE","up") # 오른쪽 위 레버
+    lever02=Lever("NO","up") # 왼쪽 위 레버
+    lever03=Lever("SE","up") # 오른쪽 아래 레버
+    lever04=Lever("SO","up") # 왼쪽 아래 레버
+    game.allLevers.add(lever01)
+    game.allLevers.add(lever02)
+    game.allLevers.add(lever03)
+    game.allLevers.add(lever04)
+
+    # The four Trap
+    trap01=Trap("NE") # 오른쪽 위 트랩
+    trap02=Trap("NO") # 왼쪽 위 트랩
+    trap03=Trap("SE") # 오른쪽 아래 트랩
+    trap04=Trap("SO") # 왼쪽 아래 트랩
+    game.allTraps.add(trap01)
+    game.allTraps.add(trap02)
+    game.allTraps.add(trap03)
+    game.allTraps.add(trap04)
+
+    #매개변수로 surface객체를 자신에게 그려넣는다
+    # 첫 번째 매개변수가 그려넣을 객체, 두 번째 매개변수가 그려넣을 좌표
+    game.surface.blit(game.bg,game.bg.get_rect()) # 배경을 그려넣는다
+    
+    main() ## change
+    exit() # 종료
