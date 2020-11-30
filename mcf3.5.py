@@ -476,6 +476,7 @@ class Button(pygame.sprite.Sprite):
             game.stop=False ## 게임 시작
             mario.life=3 ## 목숨 초기화
             score.point=0 ## 점수 초기화
+            score.increment=0 ## 증가 점수 초기화
             score.compute() ## 점수 위치 계산
             game.speed=1500 ## 게임 속도 초기화
             game.speed_save=1500
