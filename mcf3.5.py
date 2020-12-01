@@ -793,6 +793,7 @@ class Miss(pygame.sprite.Sprite): # miss아이콘
             self.rect=self.rect.move(555,70) # 2 miss
         else:
             self.rect=self.rect.move(515,70) # 3 miss
+        game.speed=game.speed_save
 
 class Information(pygame.sprite.Sprite):
     # 문자열, 위치, 폰트 종류를 전달 받아 화면에 출력해준다
@@ -1909,7 +1910,7 @@ def main():
 
     while not events_handle(): # 이벤트가 발생하는 동안
         while not events_handle() and mario.life!=0: # 생명이 남아있는 동안 
-            #print (game.speed)
+            print (game.speed)
             if game.stop==False: # 멈추지 않는다
                                 
                 # Elevator at right is created afer 800 milliseconds
