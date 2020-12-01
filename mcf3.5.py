@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*
-# hyeon code
+## 수정한 대부분의 코드에 ##으로 주석을 달아놨습니다
+## 수정한 부분을 확인하고 싶으시다면 ##으로 검색해서 찾아보세요!
 
 #---------------------------------------------------------------------------------------------------------------
 #                                   Auteur du présent code / Written by
@@ -326,7 +327,7 @@ class Game():
         #-----------------------------------------------
         ## change
         self.btn=4*[0]
-        self.b00=pygame.image.load("./graph/info.png") #3 게임설명 아이콘
+        self.b00=pygame.image.load("./graph/info.png") ## 게임설명 아이콘
         self.b01=pygame.image.load("./graph/on.png") ## 소리 on
         self.b02=pygame.image.load("./graph/mute.png") ## 음소거 아이콘
         self.b03=pygame.image.load("./graph/retry.png") ## 다시시작 아이콘
@@ -793,7 +794,7 @@ class Miss(pygame.sprite.Sprite): # miss아이콘
             self.rect=self.rect.move(555,70) # 2 miss
         else:
             self.rect=self.rect.move(515,70) # 3 miss
-        game.speed=game.speed_save
+        game.speed=game.speed_save ## 속도를 원래로 되돌린다
 
 class Information(pygame.sprite.Sprite):
     # 문자열, 위치, 폰트 종류를 전달 받아 화면에 출력해준다
@@ -1845,7 +1846,7 @@ class Score:
     ## change
     def celebrate(self): ## 축하 메세지를 출력하는 클래스
 
-        info=Information("congratulations!",100,200,3,RED) ## 축하 메세지
+        info=Information("congratulations!",130,200,3,RED) ## 축하 메세지
         game.allTexts.add(info) # 축하 메세지
         game.allTexts.clear(game.surface,game.bg) ## 메세지 그리기
         game.allTexts.draw(game.surface) ## 화면에 출력
@@ -1853,7 +1854,7 @@ class Score:
         pygame.time.wait(300) ## 300ms동안 출력
         info.kill()
 
-        info=Information("congratulations!",100,200,3,ORANGE) # 축하 메세지
+        info=Information("congratulations!",130,200,3,ORANGE) # 축하 메세지
         game.allTexts.add(info) # 축하 메세지
         game.allTexts.clear(game.surface,game.bg) # 메세지 그리기
         game.allTexts.draw(game.surface) # 화면에 출력
@@ -1861,7 +1862,7 @@ class Score:
         pygame.time.wait(300) ## 300ms동안 출력
         info.kill()
 
-        info=Information("congratulations!",100,200,3,YELLOW) # 축하 메세지
+        info=Information("congratulations!",130,200,3,YELLOW) # 축하 메세지
         game.allTexts.add(info) # 축하 메세지
         game.allTexts.clear(game.surface,game.bg) # 메세지 그리기
         game.allTexts.draw(game.surface) # 화면에 출력
@@ -1869,7 +1870,7 @@ class Score:
         pygame.time.wait(300) ## 300ms동안 출력
         info.kill()
 
-        info=Information("you get the score " + str(self.point),100,200,3,GREEN) # 축하 메세지
+        info=Information("you got the score " + str(self.point),100,200,3,GREEN) # 축하 메세지
         game.allTexts.add(info) # 축하 메세지
         game.allTexts.clear(game.surface,game.bg) # 메세지 그리기
         game.allTexts.draw(game.surface) # 화면에 출력
@@ -1877,7 +1878,7 @@ class Score:
         pygame.time.wait(300) ## 300ms동안 출력
         info.kill()
 
-        info=Information("you get the score " + str(self.point),100,200,3,BLUE) # 축하 메세지
+        info=Information("you got the score " + str(self.point),100,200,3,BLUE) # 축하 메세지
         game.allTexts.add(info) # 축하 메세지
         game.allTexts.clear(game.surface,game.bg) # 메세지 그리기
         game.allTexts.draw(game.surface) # 화면에 출력
@@ -1885,7 +1886,7 @@ class Score:
         pygame.time.wait(300) ## 300ms동안 출력
         info.kill()
 
-        info=Information("you get the score " + str(self.point),100,200,3,BLACK) # 축하 메세지
+        info=Information("you got the score " + str(self.point),100,200,3,BLACK) # 축하 메세지
         game.allTexts.add(info) # 축하 메세지
         game.allTexts.clear(game.surface,game.bg) # 메세지 그리기
         game.allTexts.draw(game.surface) # 화면에 출력
@@ -1893,7 +1894,7 @@ class Score:
         pygame.time.wait(300) ## 300ms동안 출력
         info.kill()
 
-        info=Information("you get the score " + str(self.point),100,200,3,GREY) # 축하 메세지
+        info=Information("you got the score " + str(self.point),100,200,3,GREY) # 축하 메세지
         game.allTexts.add(info) # 축하 메세지
         game.allTexts.clear(game.surface,game.bg) # 메세지 그리기
         game.allTexts.draw(game.surface) # 화면에 출력
